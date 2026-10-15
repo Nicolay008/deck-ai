@@ -45,3 +45,9 @@ CREATE TABLE IF NOT EXISTS battle_cards (
     PRIMARY KEY (battle_id, side, slot),
     FOREIGN KEY (battle_id, side) REFERENCES battle_players
 );
+
+CREATE TABLE IF NOT EXISTS battle_notes (
+    battle_id  TEXT PRIMARY KEY REFERENCES battles,
+    tag        TEXT CHECK (tag IN ('rival_afk', 'me_rendi', 'inicio_distraido', 'desconexion', 'otro')),
+    note       TEXT
+);
