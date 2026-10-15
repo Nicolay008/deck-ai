@@ -37,13 +37,48 @@ deck-ai/
 - `cards`: catálogo de cartas.
 - `battle_notes`: etiquetas para partidas atípicas (rival AFK, rendición...).
 
+## Instalación
+
+1. **Clave de la API.** Crea una cuenta en
+   [developer.clashroyale.com](https://developer.clashroyale.com) y genera una
+   clave autorizando la IP `45.79.218.79`, que es la del proxy de RoyaleAPI.
+   Así la clave funciona aunque tu IP cambie.
+
+2. **Entorno de Python:**
+
+```bash
+   python3 -m venv .venv
+   source .venv/bin/activate
+   pip install -r requirements.txt
+```
+
+3. **Variables de entorno.** Copia la plantilla y rellena tu token y tu tag:
+
+```bash
+   cp .env.example .env
+```
+
+4. **Base de datos** (PostgreSQL):
+
+```bash
+   createdb deck_ai
+   psql deck_ai -f sql/schema.sql
+   psql deck_ai -f sql/views.sql
+```
+
 ## Uso
 
 ```bash
-cp .env.example .env        # añadir CR_TOKEN
-psql deck_ai -f sql/schema.sql
-psql deck_ai -f sql/views.sql
 python src/ingest.py
+```
+
+Descarga tus últimas partidas y guarda solo las nuevas. Ejecútalo con
+regularidad: la API conserva unas 40 partidas por jugador.
+
+Para ver tus partidas con el mazo rival:
+
+```sql
+SELECT * FROM v_partidas ORDER BY battle_time DESC;
 ```
 
 ## Hallazgos de los datos
