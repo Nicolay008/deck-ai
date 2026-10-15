@@ -87,9 +87,26 @@ SELECT * FROM v_partidas ORDER BY battle_time DESC;
 - `evolutionLevel` distingue la forma de la carta: 0 normal, 1 evolución, 2 héroe.
 - Los niveles usan una escala distinta por rareza: una carta está al máximo cuando `level = maxLevel`.
 
-## Próximos pasos
+## Hoja de ruta
 
+### Fase 1 — Datos propios (en curso)
+- [x] Ingesta desde la API oficial sin duplicados
+- [x] Modelo de datos en PostgreSQL con JSON crudo
+- [x] Vista de partidas con evoluciones y héroes del rival
+- [x] Etiquetado de partidas atípicas
 - [ ] Automatizar la ingesta
 - [ ] Importar historial antiguo desde CSV
-- [ ] Clasificador de arquetipos rivales
+
+### Fase 2 — Análisis
+- [ ] Clasificador de arquetipos rivales (carta ancla + coste medio de elixir)
+- [ ] Winrate y elixir desperdiciado por arquetipo, modo y variante de mazo
 - [ ] Dashboard de progreso
+
+### Fase 3 — Visión por computadora
+- [ ] Reconocer cartas jugadas en repeticiones grabadas
+- [ ] Medir intercambios de elixir jugada a jugada
+
+### Fase 4 — Entrenador de decisiones
+- [ ] Situaciones de partida con respuestas de referencia
+      (decisiones de jugadores top y reglas propias)
+- [ ] Puntuación por
