@@ -4,6 +4,8 @@ Pipeline ETL que descarga mis partidas desde la API oficial de Clash Royale,
 las guarda en PostgreSQL y permite analizar mi rendimiento por modo, mazo y
 arquetipo rival.
 
+🎮 **Pruébalo:** [Elixir Lab](https://nicolay008.github.io/deck-ai/), un minijuego para entrenar el conteo de elixir.
+
 ## Por qué
 
 La API solo conserva las últimas ~40 partidas de cada jugador. Este proyecto
@@ -16,16 +18,22 @@ en **mi liga**, contra los mazos que **de verdad** me encuentro.
 - Python 3 (`requests`, `psycopg`, `python-dotenv`)
 - PostgreSQL 18
 - API oficial de Clash Royale vía proxy de RoyaleAPI
+- HTML, CSS y JavaScript sin dependencias para Elixir Lab, publicado con GitHub Pages
 
 ## Estructura
 
 ```
 deck-ai/
+├── docs/                 # Elixir Lab (GitHub Pages)
+│   ├── index.html        # el minijuego
+│   ├── cards.json        # catálogo generado desde la API
+│   └── nombres_es.json   # nombres de las cartas en español
 ├── sql/
-│   ├── schema.sql   # tablas
-│   └── views.sql    # vistas de análisis
+│   ├── schema.sql        # tablas
+│   └── views.sql         # vistas de análisis
 └── src/
-    └── ingest.py    # descarga y carga de partidas
+    ├── ingest.py         # descarga y carga de partidas
+    └── export_cards.py   # genera docs/cards.json
 ```
 
 ## Modelo de datos
@@ -73,13 +81,38 @@ python src/ingest.py
 ```
 
 Descarga tus últimas partidas y guarda solo las nuevas. Ejecútalo con
-regularidad: la API conserva unas 40 partidas por jugador.
+regularidad: la API conserva unas 30-40 partidas por jugador.
+
+### Ingesta automática (Windows + WSL)
+
+Una tarea del Programador de tareas de Windows ejecuta la ingesta cada 4 horas
+mientras el PC está encendido. PostgreSQL arranca solo con WSL gracias a
+`sudo systemctl enable postgresql`. La acción de la tarea es:
+
+```
+wsl.exe -d Ubuntu -u <usuario> -- bash -lc "cd ~/Proyectos/deck-ai && date >> logs/ingest.log && .venv/bin/python src/ingest.py >> logs/ingest.log 2>&1"
+```
+
+El resultado de cada ejecución queda en `logs/ingest.log` (excluido de git).
 
 Para ver tus partidas con el mazo rival:
 
 ```sql
 SELECT * FROM v_partidas ORDER BY battle_time DESC;
 ```
+
+## Elixir Lab
+
+Mis datos mostraban que gran parte de mis derrotas venía de malas decisiones
+de elixir. Elixir Lab entrena esa habilidad con dos modos:
+
+- **Adivina el coste:** sale una carta y marcas su coste antes de que se agote el tiempo.
+- **Cuenta su elixir:** el rival juega cartas y pasa el tiempo; tú calculas cuánto elixir le queda.
+
+Guarda notas sobre 20, récords y un gráfico de progreso por nivel. Los costes
+salen de la API oficial: para actualizarlos, ejecuta `python src/export_cards.py`
+y añade a `docs/nombres_es.json` el nombre en español de las cartas nuevas que
+indique.
 
 ## Hallazgos de los datos
 
@@ -94,7 +127,7 @@ SELECT * FROM v_partidas ORDER BY battle_time DESC;
 - [x] Modelo de datos en PostgreSQL con JSON crudo
 - [x] Vista de partidas con evoluciones y héroes del rival
 - [x] Etiquetado de partidas atípicas
-- [ ] Automatizar la ingesta
+- [x] Automatizar la ingesta
 - [ ] Importar historial antiguo desde CSV
 
 ### Fase 2 — Análisis
@@ -107,6 +140,19 @@ SELECT * FROM v_partidas ORDER BY battle_time DESC;
 - [ ] Medir intercambios de elixir jugada a jugada
 
 ### Fase 4 — Entrenador de decisiones
+- [x] Elixir Lab: entrenamiento de costes y conteo de elixir
 - [ ] Situaciones de partida con respuestas de referencia
       (decisiones de jugadores top y reglas propias)
-- [ ] Puntuación por
+- [ ] Puntuación por intercambio de elixir
+
+## Nota
+
+Este proyecto analiza partidas ya jugadas y entrena habilidades fuera del juego.
+No automatiza ni interactúa con Clash Royale.
+
+Elixir Lab es material no oficial y no está respaldado por Supercell. Consulta la
+[política de contenido de fans de Supercell](https://www.supercell.com/fan-content-policy).
+
+## Licencia
+
+MIT
