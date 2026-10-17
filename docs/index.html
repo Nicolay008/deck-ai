@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Elixir Lab</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%22-34%20-56%2068%20100%22%3E%3Cpath%20d%3D%22M-9%20-26%20L-9%20-6%20L-30%2034%20C-32%2039%20-29%2042%20-24%2042%20L24%2042%20C29%2042%2032%2039%2030%2034%20L9%20-6%20L9%20-26%20Z%22%20fill%3D%22none%22%20stroke%3D%22%23C03ED2%22%20stroke-width%3D%225%22%20stroke-linejoin%3D%22round%22/%3E%3Cpath%20d%3D%22M-20%2018%20L20%2018%20L28%2035%20C29%2038%2027%2040%2024%2040%20L-24%2040%20C-27%2040%20-29%2038%20-28%2035%20Z%22%20fill%3D%22%23D255E4%22/%3E%3Crect%20x%3D%22-14%22%20y%3D%22-32%22%20width%3D%2228%22%20height%3D%227%22%20rx%3D%222%22%20fill%3D%22%23C03ED2%22/%3E%3Cpath%20d%3D%22M0%20-54%20C4%20-48%207%20-44%207%20-40%20C7%20-36%204%20-34%200%20-34%20C-4%20-34%20-7%20-36%20-7%20-40%20C-7%20-44%20-4%20-48%200%20-54%20Z%22%20fill%3D%22%23E06AF0%22/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@400;600;800&display=swap" rel="stylesheet">
@@ -211,6 +212,8 @@ dialog#about ul.next li{margin:.3rem 0}
 dialog#about .studio{margin-top:1rem;font-size:.9rem}
 footer .link{display:block;margin:0 auto .5rem;font-size:.9rem}
 .top{display:flex;align-items:center;justify-content:space-between;gap:1rem}
+.brand{display:flex;align-items:center;gap:.45rem}
+.brand .logo{width:1.05em;height:1.55em;flex:none;overflow:visible}
 .topbtns{display:flex;gap:.4rem}
 .langbtn{border:2px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;font-weight:800;font-size:.85rem;border-radius:999px;padding:.3rem .75rem;cursor:pointer}
 .badge-info{margin:-.25rem 0 .75rem}
@@ -243,7 +246,7 @@ footer .link{display:block;margin:0 auto .5rem;font-size:.9rem}
 <main>
   <!-- SETUP -->
   <section id="setup">
-    <div class="top"><h1>Elixir Lab</h1><div class="topbtns"><button class="langbtn snd" id="sndBtn" aria-label="Sonido"></button><button class="langbtn" id="langBtn" aria-label="Language"></button></div></div>
+    <div class="top"><h1 class="brand"><svg class="logo" viewBox="-34 -56 68 100" aria-hidden="true"><defs><linearGradient id="lgG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--elixir-2)"/><stop offset="1" style="stop-color:var(--elixir)"/></linearGradient></defs><path d="M-9 -26 L-9 -6 L-30 34 C-32 39 -29 42 -24 42 L24 42 C29 42 32 39 30 34 L9 -6 L9 -26 Z" fill="none" style="stroke:var(--elixir)" stroke-width="4" stroke-linejoin="round"/><path d="M-20 18 L20 18 L28 35 C29 38 27 40 24 40 L-24 40 C-27 40 -29 38 -28 35 Z" fill="url(#lgG)"/><rect x="-14" y="-32" width="28" height="7" rx="2" style="fill:var(--elixir)"/><path d="M0 -54 C4 -48 7 -44 7 -40 C7 -36 4 -34 0 -34 C-4 -34 -7 -36 -7 -40 C-7 -44 -4 -48 0 -54 Z" fill="url(#lgG)"/></svg>Elixir Lab</h1><div class="topbtns"><button class="langbtn snd" id="sndBtn" aria-label="Sonido"></button><button class="langbtn" id="langBtn" aria-label="Language"></button></div></div>
     <p class="tagline" data-en="Sharpen your reactions and read your opponent.">Mejora tu reacción y lee a tu rival.</p>
 
     <div class="modes" role="radiogroup" aria-label="Modo">
