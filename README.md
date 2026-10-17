@@ -1,10 +1,10 @@
-# Deck AI — Análisis personal de partidas de Clash Royale
+# Elixir Lab — Análisis personal de partidas de Clash Royale
 
 Pipeline ETL que descarga mis partidas desde la API oficial de Clash Royale,
 las guarda en PostgreSQL y permite analizar mi rendimiento por modo, mazo y
 arquetipo rival.
 
-🎮 **Pruébalo:** [Elixir Lab](https://nicolay008.github.io/deck-ai/), un minijuego para entrenar el conteo de elixir.
+🎮 **Pruébalo:** [Elixir Lab](https://nicolay008.github.io/elixir-lab/), un minijuego para entrenar el conteo de elixir.
 
 ## Por qué
 
@@ -23,7 +23,7 @@ en **mi liga**, contra los mazos que **de verdad** me encuentro.
 ## Estructura
 
 ```
-deck-ai/
+elixir-lab/
 ├── docs/                 # Elixir Lab (GitHub Pages)
 │   ├── index.html        # el minijuego
 │   ├── cards.json        # catálogo generado desde la API
