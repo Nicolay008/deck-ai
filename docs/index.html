@@ -281,6 +281,8 @@ footer .link{display:block;margin:0 auto .5rem;font-size:.9rem}
     </div>
 
     <div id="countOpts" class="hidden">
+      <div class="badges" id="cBadges" aria-label="Insignias"></div>
+      <p class="desc badge-info hidden" id="cBadgeInfo"></p>
       <fieldset>
         <legend data-en="Stage">Etapa</legend>
         <div class="seg stages">
@@ -668,11 +670,12 @@ function finish(){
     const m=loadM(), prev=m[timeLimit]||{};
     const cur={done:true, perfect:prev.perfect||misses.length===0, bestAvg:prev.bestAvg?Math.min(prev.bestAvg,avgT):avgT};
     if(prev.bestAvg && avgT<prev.bestAvg) msgs.push(L(`⚡ Nuevo récord de velocidad: ${fmt(avgT)} s por carta`,`⚡ New speed record: ${fmt(avgT)} s per card`));
+    if(!prev.done) msgs.push(L(`👑 Maestría ${DIF_NAME(timeLimit)} conseguida (${mastered().length+1}/3)`,`👑 ${DIF_NAME(timeLimit)} Mastery unlocked (${mastered().length+1}/3)`));
     m[timeLimit]=cur; saveM(m);
   }
   const after=badgeStates();
   const newB=BADGES.filter((b,i)=>after[i]&&!before[i]);
-  if(newB.length) msgs.unshift(`${L("¡Nueva insignia!","New badge!")} ${newB.map(b=>b.i+" "+b.t).join(" · ")}`);
+  if(newB.length) msgs.unshift(`${L("¡Nueva insignia!","New badge!")} ${newB.map(b=>b.i+" "+bTitle(b)).join(" · ")}`);
   if(msgs.length){ setTimeout(sfx.fanfare,200); const el=$("recBanner"); el.className="banner rec"; el.textContent=msgs.join(" · "); }
   renderHistory(h);
   progressChart($("costChart"), h.attempts.map(a=>({...a,nota:attHits(a)})), a=>a.t, COST_GROUPS, timeLimit, Math.max(20,...h.attempts.map(attHits)));
@@ -841,26 +844,36 @@ function loadM(){ try{return JSON.parse(localStorage.getItem(MKEY))||{};}catch(e
 function saveM(m){ try{localStorage.setItem(MKEY,JSON.stringify(m));}catch(e){} }
 const DIF_NAME=t=>({8:L("Fácil","Easy"),5:"Normal",3:L("Difícil","Hard")})[t];
 const bestHits=()=>{const h=load(); return h.attempts.length?Math.max(...h.attempts.map(attHits)):0;};
+const mastered=()=>[8,5,3].filter(t=>(loadM()[t]||{}).done);
 const BADGES=[
-  {i:"🥉",t:L("25 cartas","25 cards"),  on:()=>bestHits()>=25,  how:()=>L("Acierta 25 cartas en una sola partida.","Get 25 cards right in a single run."), prog:()=>L(`Tu récord: ${bestHits()}.`,`Your best: ${bestHits()}.`)},
-  {i:"🥈",t:L("50 cartas","50 cards"),  on:()=>bestHits()>=50,  how:()=>L("Acierta 50 cartas en una sola partida.","Get 50 cards right in a single run."), prog:()=>L(`Tu récord: ${bestHits()}.`,`Your best: ${bestHits()}.`)},
-  {i:"🥇",t:L("100 cartas","100 cards"),on:()=>bestHits()>=100, how:()=>L("Acierta 100 cartas en una sola partida.","Get 100 cards right in a single run."), prog:()=>L(`Tu récord: ${bestHits()}.`,`Your best: ${bestHits()}.`)},
+  {i:"🥉",t:L("50 cartas","50 cards"),  on:()=>bestHits()>=50,  how:()=>L("Acierta 50 cartas en una sola partida.","Get 50 cards right in a single run."), prog:()=>L(`Tu récord: ${bestHits()}.`,`Your best: ${bestHits()}.`)},
+  {i:"🥈",t:L("100 cartas","100 cards"),on:()=>bestHits()>=100, how:()=>L("Acierta 100 cartas en una sola partida.","Get 100 cards right in a single run."), prog:()=>L(`Tu récord: ${bestHits()}.`,`Your best: ${bestHits()}.`)},
+  {i:"👑",t:()=>`${L("Maestría","Mastery")} ${mastered().length}/3`, on:()=>mastered().length>0, full:()=>mastered().length===3,
+     how:()=>L(`Completa las ${CARDS.length} cartas sin que caiga tu torre del rey. Hay una maestría por dificultad: Fácil, Normal y Difícil.`,`Complete all ${CARDS.length} cards before your King Tower falls. There’s one Mastery per difficulty: Easy, Normal and Hard.`),
+     prog:()=>[8,5,3].map(t=>{const x=loadM()[t]; return x&&x.done?`${DIF_NAME(t)} ✓ (⚡ ${fmt(x.bestAvg)} s)`:`${DIF_NAME(t)} —`;}).join(" · ")},
   {i:"💎",t:L("Perfecta","Perfect"), on:()=>Object.values(loadM()).some(x=>x.perfect),
-     how:()=>L(`Completa las ${CARDS.length} cartas sin fallar ninguna.`,`Complete all ${CARDS.length} cards without a single miss.`), prog:()=>""},
-  ...[8,5,3].map((t,j)=>({i:"👑".repeat(j+1),t:DIF_NAME(t),on:()=>!!(loadM()[t]||{}).done,
-     how:()=>L(`Maestría en ${DIF_NAME(t)}: completa las ${CARDS.length} cartas sin que caiga tu torre del rey.`,`${DIF_NAME(t)} Mastery: complete all ${CARDS.length} cards before your King Tower falls.`),
-     prog:()=>{const x=loadM()[t]; return x&&x.bestAvg?L(`⚡ Tu mejor tiempo: ${fmt(x.bestAvg)} s por carta.`,`⚡ Your best time: ${fmt(x.bestAvg)} s per card.`):"";}}))
+     how:()=>L(`Completa las ${CARDS.length} cartas sin fallar ninguna.`,`Complete all ${CARDS.length} cards without a single miss.`), prog:()=>""}
 ];
-const badgeStates=()=>BADGES.map(b=>b.on());
-function renderBadges(){
-  $("badges").innerHTML=BADGES.map((b,i)=>`<button type="button" class="badge${b.on()?" on":""}" data-i="${i}"><span class="bi${[...b.i].length>1?" sm":""}">${b.i}</span>${b.t}</button>`).join("");
-  $("badges").querySelectorAll(".badge").forEach(el=>el.addEventListener("click",()=>{
-    const b=BADGES[+el.dataset.i], got=b.on();
-    const info=$("badgeInfo");
+// Controla a tu rival: 8 o más exactas en una sesión completa de 10 rondas
+const cGood=(lvl,insane)=>loadC().attempts.some(a=>a.level===lvl && a.n>=10 && a.ex>=8 && (!insane || a.rt===10 || a.rt===undefined));
+const CBADGES=[
+  {i:"🥉",t:L("Primeros pasos","First steps"),on:()=>cGood("Fácil"),      how:()=>L("Saca 8 o más exactas en una sesión de 10 rondas de Primeros pasos.","Get 8+ exact in a 10-round First steps session."),prog:()=>""},
+  {i:"🥈",t:L("Con reloj","On the clock"),   on:()=>cGood("Intermedio"), how:()=>L("Saca 8 o más exactas en una sesión de 10 rondas de Con reloj.","Get 8+ exact in a 10-round On the clock session."),prog:()=>""},
+  {i:"🥇",t:L("Partida real","Real match"),  on:()=>cGood("Medio"),      how:()=>L("Saca 8 o más exactas en una sesión de 10 rondas de Partida real.","Get 8+ exact in a 10-round Real match session."),prog:()=>""},
+  {i:"💀",t:L("Campeón","Champion"),         on:()=>cGood("Medio",true), how:()=>L("Lo mismo en Partida real, pero con Campeón definitivo.","Same in Real match, but on Ultimate Champion."),prog:()=>""}
+];
+const badgeStates=(list=BADGES)=>list.map(b=>b.on());
+const bTitle=b=>typeof b.t==="function"?b.t():b.t;
+function drawBadges(list,boxId,infoId){
+  $(boxId).innerHTML=list.map((b,i)=>`<button type="button" class="badge${b.on()?" on":""}" data-i="${i}"><span class="bi">${b.i}</span>${bTitle(b)}</button>`).join("");
+  $(boxId).querySelectorAll(".badge").forEach(el=>el.addEventListener("click",()=>{
+    const b=list[+el.dataset.i], got=b.full?b.full():b.on();
+    const info=$(infoId);
     info.textContent=`${b.i} ${b.how()} ${got?L("¡Conseguida!","Unlocked!"):""} ${b.prog()}`.replace(/\s+/g," ").trim();
     info.classList.remove("hidden");
   }));
 }
+function renderBadges(){ drawBadges(BADGES,"badges","badgeInfo"); drawBadges(CBADGES,"cBadges","cBadgeInfo"); }
 
 // ================= MODO CONTEO =================
 const CKEY="elixirCountV1";
@@ -1070,8 +1083,11 @@ function cFinish(){
   $("cAvg").textContent=`${fmt(avgT)} s`;
   const h=loadC();
   recordBanner($("cRecBanner"), h.attempts.filter(a=>a.level===cLevel.label).map(a=>a.nota), nota);
+  const cBefore=badgeStates(CBADGES);
   h.attempts.push({date:new Date().toISOString(),level:cLevel.label,n,nota,ex,dev,rt:ANSWER_TIME});
   h.attempts=h.attempts.slice(-100); saveC(h);
+  const cNew=CBADGES.filter((b,i)=>b.on()&&!cBefore[i]);
+  if(cNew.length){ setTimeout(sfx.fanfare,200); const el=$("cRecBanner"); el.className="banner rec"; el.textContent=`${L("¡Nueva insignia!","New badge!")} ${cNew.map(b=>b.i+" "+bTitle(b)).join(" · ")}`; }
   progressChart($("countChart"), h.attempts, a=>a.level, COUNT_GROUPS, cLevel.label);
   $("cAttemptBody").innerHTML=h.attempts.slice(-8).reverse().map(a=>{
     const d=new Date(a.date);
