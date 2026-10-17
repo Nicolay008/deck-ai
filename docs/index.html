@@ -188,6 +188,22 @@ footer{max-width:30rem;margin:0 auto;padding:0 1rem 1.5rem;font-size:.8rem;color
 .seg label{display:flex}
 .seg label>span{flex:1;display:flex;align-items:center;justify-content:center;text-align:center}
 .stages label>span{flex-direction:column}
+
+.badges{display:flex;gap:.5rem;margin:0 0 .75rem}
+.badge{flex:1;text-align:center;padding:.5rem .25rem;border-radius:.8rem;background:var(--surface);border:2px solid var(--line);font-weight:800;font-size:.8rem;color:var(--muted);line-height:1.2}
+.badge .bi{display:block;font-size:1.5rem;filter:grayscale(1);opacity:.35}
+.badge.on{border-color:var(--gold);color:var(--ink)}
+.badge.on .bi{filter:none;opacity:1}
+dialog#about{max-width:28rem;width:calc(100% - 2rem);border:2px solid var(--line);border-radius:1.25rem;background:var(--surface);color:var(--ink);padding:1.25rem 1.25rem 1rem}
+dialog#about::backdrop{background:rgba(10,4,20,.6)}
+dialog#about h2{font-family:"Lilita One","Arial Rounded MT Bold",sans-serif;font-weight:400;font-size:1.5rem;margin:0 0 .5rem}
+dialog#about h3{font-size:1rem;margin:1rem 0 .25rem}
+dialog#about p{margin:.25rem 0 .5rem}
+dialog#about a{color:var(--elixir)}
+dialog#about .studio{margin-top:1rem;font-size:.9rem}
+footer .link{display:block;margin:0 auto .5rem;font-size:.9rem}
+.top{display:flex;align-items:center;justify-content:space-between;gap:1rem}
+.langbtn{border:2px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;font-weight:800;font-size:.85rem;border-radius:999px;padding:.3rem .75rem;cursor:pointer}
 .desc{margin:.45rem 0 0;font-size:.92rem;min-height:1.4em}
 
 .edrops{display:inline-flex;gap:4px;margin-left:.6rem;vertical-align:middle}
@@ -205,36 +221,37 @@ footer{max-width:30rem;margin:0 auto;padding:0 1rem 1.5rem;font-size:.8rem;color
 <main>
   <!-- SETUP -->
   <section id="setup">
-    <h1>Elixir Lab</h1>
-    <p class="tagline">Mejora tu reacción y lee a tu rival.</p>
+    <div class="top"><h1>Elixir Lab</h1><button class="langbtn" id="langBtn" aria-label="Language"></button></div>
+    <p class="tagline" data-en="Sharpen your reactions and read your opponent.">Mejora tu reacción y lee a tu rival.</p>
 
     <div class="modes" role="radiogroup" aria-label="Modo">
       <label class="mode">
         <input type="radio" name="mode" value="cost" checked>
         <span class="box">
           <span class="pv" id="pvCost"></span>
-          <span class="mtitle">Maestría de cartas</span>
-          <span class="mdesc">Aprende cuánto elixir <i class="ix" aria-hidden="true"></i> cuesta cada carta hasta dominarlas todas.</span>
+          <span class="mtitle" data-en="Card Mastery">Maestría de cartas</span>
+          <span class="mdesc" data-en="Learn how much elixir &lt;i class=&quot;ix&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt; every card costs until you master them all.">Aprende cuánto elixir <i class="ix" aria-hidden="true"></i> cuesta cada carta hasta dominarlas todas.</span>
         </span>
       </label>
       <label class="mode">
         <input type="radio" name="mode" value="count">
         <span class="box">
           <span class="pv" id="pvCount"></span>
-          <span class="mtitle">Controla a tu rival</span>
-          <span class="mdesc">Aprende a llevar la cuenta del elixir de tu rival.</span>
+          <span class="mtitle" data-en="Track your opponent">Controla a tu rival</span>
+          <span class="mdesc" data-en="Learn to keep count of your opponent’s elixir.">Aprende a llevar la cuenta del elixir de tu rival.</span>
         </span>
       </label>
     </div>
 
     <div id="costOpts">
-      <p class="lives-intro"><b class="challenge">¿Cuántas cartas eres capaz de dominar?</b>Tienes 3 torres 🏰🏰🏰. Cada fallo derriba una; cada racha de 10 aciertos te da una corona 👑 y reconstruye una torre.</p>
+      <div class="badges" id="badges" aria-label="Insignias de Maestría"></div>
+      <p class="lives-intro" data-en="&lt;b class=&quot;challenge&quot;&gt;How many cards can you master?&lt;/b&gt;You have 3 towers 🏰🏰🏰. Every miss knocks one down; every streak of 10 earns you a crown 👑 and rebuilds a tower."><b class="challenge">¿Cuántas cartas eres capaz de dominar?</b>Tienes 3 torres 🏰🏰🏰. Cada fallo derriba una; cada racha de 10 aciertos te da una corona 👑 y reconstruye una torre.</p>
       <fieldset>
-        <legend>Dificultad</legend>
+        <legend data-en="Difficulty">Dificultad</legend>
         <div class="seg">
-          <label><input type="radio" name="time" value="8"><span>Fácil</span></label>
-          <label><input type="radio" name="time" value="5" checked><span>Normal</span></label>
-          <label><input type="radio" name="time" value="3"><span>Difícil</span></label>
+          <label><input type="radio" name="time" value="8"><span data-en="Easy">Fácil</span></label>
+          <label><input type="radio" name="time" value="5" checked><span data-en="Normal">Normal</span></label>
+          <label><input type="radio" name="time" value="3"><span data-en="Hard">Difícil</span></label>
         </div>
         <p class="desc" id="d-time"></p>
       </fieldset>
@@ -242,27 +259,27 @@ footer{max-width:30rem;margin:0 auto;padding:0 1rem 1.5rem;font-size:.8rem;color
 
     <div id="countOpts" class="hidden">
       <fieldset>
-        <legend>Etapa</legend>
+        <legend data-en="Stage">Etapa</legend>
         <div class="seg stages">
-          <label><input type="radio" name="diff" value="facil" checked><span><b>1</b> Primeros pasos</span></label>
-          <label><input type="radio" name="diff" value="intermedio"><span><b>2</b> Con reloj</span></label>
-          <label><input type="radio" name="diff" value="medio"><span><b>3</b> Partida real</span></label>
+          <label><input type="radio" name="diff" value="facil" checked><span data-en="&lt;b&gt;1&lt;/b&gt; First steps"><b>1</b> Primeros pasos</span></label>
+          <label><input type="radio" name="diff" value="intermedio"><span data-en="&lt;b&gt;2&lt;/b&gt; On the clock"><b>2</b> Con reloj</span></label>
+          <label><input type="radio" name="diff" value="medio"><span data-en="&lt;b&gt;3&lt;/b&gt; Real match"><b>3</b> Partida real</span></label>
         </div>
         <p class="desc" id="d-diff"></p>
       </fieldset>
       <fieldset>
-        <legend>Desafío</legend>
+        <legend data-en="Challenge">Desafío</legend>
         <div class="seg">
-          <label><input type="radio" name="rtime" value="20" checked><span>⚔️ Arena de entrenamiento</span></label>
-          <label><input type="radio" name="rtime" value="10"><span>Campeón definitivo 💀</span></label>
+          <label><input type="radio" name="rtime" value="20" checked><span data-en="⚔️ Training Arena">⚔️ Arena de entrenamiento</span></label>
+          <label><input type="radio" name="rtime" value="10"><span data-en="Ultimate Champion 💀">Campeón definitivo 💀</span></label>
         </div>
         <p class="desc" id="d-rtime"></p>
       </fieldset>
-      <label class="check"><input type="checkbox" id="showNames" checked> Mostrar el nombre de las cartas</label>
+      <label class="check"><input type="checkbox" id="showNames" checked> <span data-en="Show card names">Mostrar el nombre de las cartas</span></label>
     </div>
 
-    <button class="btn" id="start">Empezar</button>
-    <button class="btn ghost hidden" id="practiceHard">Practicar mis cartas difíciles</button>
+    <button class="btn" id="start" data-en="Start">Empezar</button>
+    <button class="btn ghost hidden" id="practiceHard" data-en="Practice my hardest cards">Practicar mis cartas difíciles</button>
     <div class="best" id="best"></div>
   </section>
 
@@ -275,7 +292,7 @@ footer{max-width:30rem;margin:0 auto;padding:0 1rem 1.5rem;font-size:.8rem;color
     </div>
     <div class="ctrl">
       <span></span>
-      <button class="link" id="quit">Salir</button>
+      <button class="link" id="quit" data-en="Quit">Salir</button>
     </div>
     <div class="card" id="card">
       <img id="cardImg" class="cimg" alt="" width="96" height="115" decoding="async">
@@ -289,37 +306,37 @@ footer{max-width:30rem;margin:0 auto;padding:0 1rem 1.5rem;font-size:.8rem;color
 
   <!-- RESULTS -->
   <section id="results" class="hidden">
-    <h1>Tu marca</h1>
+    <h1 data-en="Your score">Tu marca</h1>
     <div class="score display" id="score"></div>
     <div class="grade-sub" id="gradeSub"></div>
     <div class="stats">
-      <div><b id="acc"></b>precisión</div>
-      <div><b id="dev"></b>elixir desviado</div>
-      <div><b id="avg"></b>por respuesta</div>
+      <div data-en="&lt;b id=&quot;acc&quot;&gt;&lt;/b&gt;accuracy"><b id="acc"></b>precisión</div>
+      <div data-en="&lt;b id=&quot;dev&quot;&gt;&lt;/b&gt;elixir off"><b id="dev"></b>elixir desviado</div>
+      <div data-en="&lt;b id=&quot;avg&quot;&gt;&lt;/b&gt;per answer"><b id="avg"></b>por respuesta</div>
     </div>
     <div class="banner hidden" id="recBanner"></div>
     <div class="chart" id="costChart"></div>
     <div id="missWrap">
-      <p style="color:var(--ink);font-weight:800;margin-bottom:.5rem">Fallos de esta ronda</p>
+      <p style="color:var(--ink);font-weight:800;margin-bottom:.5rem" data-en="Misses this round">Fallos de esta ronda</p>
       <ul class="misses" id="misses"></ul>
     </div>
-    <button class="btn" id="again">Jugar otra vez</button>
-    <button class="btn ghost" id="retryMisses">Repetir solo las falladas</button>
-    <button class="btn ghost" id="back">Cambiar ajustes</button>
+    <button class="btn" id="again" data-en="Play again">Jugar otra vez</button>
+    <button class="btn ghost" id="retryMisses" data-en="Retry only the misses">Repetir solo las falladas</button>
+    <button class="btn ghost" id="back" data-en="Change settings">Cambiar ajustes</button>
 
     <div class="hist" id="histWrap">
-      <h2>Tus cartas más difíciles</h2>
-      <p class="note">Suma todos tus intentos: un fallo queda registrado aunque luego la aciertes.</p>
+      <h2 data-en="Your hardest cards">Tus cartas más difíciles</h2>
+      <p class="note" data-en="Counts all your attempts: a miss stays recorded even if you get it right later.">Suma todos tus intentos: un fallo queda registrado aunque luego la aciertes.</p>
       <div class="tblwrap"><table class="tbl">
-        <thead><tr><th>Carta</th><th class="num">Fallos</th><th class="num">Tiempo medio</th><th class="num">Desvío</th></tr></thead>
+        <thead><tr data-en="&lt;th&gt;Card&lt;/th&gt;&lt;th class=&quot;num&quot;&gt;Misses&lt;/th&gt;&lt;th class=&quot;num&quot;&gt;Avg. time&lt;/th&gt;&lt;th class=&quot;num&quot;&gt;Off&lt;/th&gt;"><th>Carta</th><th class="num">Fallos</th><th class="num">Tiempo medio</th><th class="num">Desvío</th></tr></thead>
         <tbody id="hardBody"></tbody>
       </table></div>
-      <h2>Intentos anteriores</h2>
+      <h2 data-en="Previous attempts">Intentos anteriores</h2>
       <div class="tblwrap"><table class="tbl">
-        <thead><tr><th>Fecha</th><th class="num">Cartas</th><th class="num">Precisión</th><th class="num">Desvío</th><th class="num">Tiempo</th></tr></thead>
+        <thead><tr data-en="&lt;th&gt;Date&lt;/th&gt;&lt;th class=&quot;num&quot;&gt;Cards&lt;/th&gt;&lt;th class=&quot;num&quot;&gt;Accuracy&lt;/th&gt;&lt;th class=&quot;num&quot;&gt;Off&lt;/th&gt;&lt;th class=&quot;num&quot;&gt;Time&lt;/th&gt;"><th>Fecha</th><th class="num">Cartas</th><th class="num">Precisión</th><th class="num">Desvío</th><th class="num">Tiempo</th></tr></thead>
         <tbody id="attemptBody"></tbody>
       </table></div>
-      <button class="link" id="reset">Borrar historial</button>
+      <button class="link" id="reset" data-en="Clear history">Borrar historial</button>
     </div>
   </section>
   <!-- COUNT GAME -->
@@ -330,52 +347,76 @@ footer{max-width:30rem;margin:0 auto;padding:0 1rem 1.5rem;font-size:.8rem;color
       <span id="cPoints">0 exactas</span>
     </div>
     <div class="ctrl">
-      <button class="link" id="cReplay">↺ Ver de nuevo</button>
-      <button class="link" id="cQuit">Terminar</button>
+      <button class="link" id="cReplay" data-en="↺ Replay">↺ Ver de nuevo</button>
+      <button class="link" id="cQuit" data-en="Finish">Terminar</button>
     </div>
     <div class="card" id="cCard">
       <span class="phase" id="cPhase"></span>
       <ul class="feed" id="feed"></ul>
       <div id="cAsk" class="hidden">
-        <div class="display" style="font-size:1.5rem;margin:.75rem 0 .25rem">¿Cuánto elixir tiene ahora?</div>
+        <div class="display" style="font-size:1.5rem;margin:.75rem 0 .25rem" data-en="How much elixir do they have now?">¿Cuánto elixir tiene ahora?</div>
         <div class="feedback" id="cFeedback"></div>
         <ul class="breakdown hidden" id="breakdown"></ul>
       </div>
     </div>
     <div class="bar hidden" id="cBar" aria-hidden="true"></div>
     <div class="nums hidden" id="nums"></div>
-    <button class="btn hidden" id="cNext" style="margin-top:1rem">Siguiente</button>
+    <button class="btn hidden" id="cNext" style="margin-top:1rem" data-en="Next">Siguiente</button>
   </section>
 
   <!-- COUNT RESULTS -->
   <section id="countResults" class="hidden">
-    <h1>Tu nota</h1>
+    <h1 data-en="Your score">Tu nota</h1>
     <div class="score display" id="cScore"></div>
     <div class="grade-sub" id="cSub"></div>
     <div class="stats">
-      <div><b id="cAcc"></b>exactas</div>
-      <div><b id="cDev"></b>elixir desviado</div>
-      <div><b id="cAvg"></b>por respuesta</div>
+      <div data-en="&lt;b id=&quot;cAcc&quot;&gt;&lt;/b&gt;exact"><b id="cAcc"></b>exactas</div>
+      <div data-en="&lt;b id=&quot;cDev&quot;&gt;&lt;/b&gt;elixir off"><b id="cDev"></b>elixir desviado</div>
+      <div data-en="&lt;b id=&quot;cAvg&quot;&gt;&lt;/b&gt;per answer"><b id="cAvg"></b>por respuesta</div>
     </div>
     <div class="banner hidden" id="cRecBanner"></div>
     <div class="chart" id="countChart"></div>
-    <button class="btn" id="cAgain">Jugar otra vez</button>
-    <button class="btn ghost" id="cBack">Cambiar ajustes</button>
+    <button class="btn" id="cAgain" data-en="Play again">Jugar otra vez</button>
+    <button class="btn ghost" id="cBack" data-en="Change settings">Cambiar ajustes</button>
     <div class="hist">
-      <h2>Intentos anteriores</h2>
+      <h2 data-en="Previous attempts">Intentos anteriores</h2>
       <div class="tblwrap"><table class="tbl">
-        <thead><tr><th>Fecha</th><th>Nivel</th><th class="num">Nota</th><th class="num">Exactas</th><th class="num">Desvío</th></tr></thead>
+        <thead><tr data-en="&lt;th&gt;Date&lt;/th&gt;&lt;th&gt;Stage&lt;/th&gt;&lt;th class=&quot;num&quot;&gt;Score&lt;/th&gt;&lt;th class=&quot;num&quot;&gt;Exact&lt;/th&gt;&lt;th class=&quot;num&quot;&gt;Off&lt;/th&gt;"><th>Fecha</th><th>Nivel</th><th class="num">Nota</th><th class="num">Exactas</th><th class="num">Desvío</th></tr></thead>
         <tbody id="cAttemptBody"></tbody>
       </table></div>
     </div>
   </section>
 </main>
-<footer>Este material no es oficial y no está respaldado por Supercell. Para más información, consulta la política de contenido de fans de Supercell: <a href="https://www.supercell.com/fan-content-policy" style="color:inherit">www.supercell.com/fan-content-policy</a>.</footer>
+<dialog id="about">
+  <h2 data-en="About Elixir Lab">Acerca de Elixir Lab</h2>
+  <p data-en="A free minigame to train what matters most in a match: knowing what every card costs and how much elixir your opponent has left.">Un minijuego gratuito para entrenar lo que más pesa en una partida: saber cuánto cuesta cada carta y cuánto elixir le queda a tu rival.</p>
+  <p data-en="It was born from analyzing real matches: the data showed that many losses came from elixir decisions, so the next step was to train them.">Nació de analizar partidas reales: los datos mostraban que muchas derrotas venían de decisiones de elixir, así que el siguiente paso fue entrenarlas.</p>
+  <h3 data-en="Open source">Código abierto</h3>
+  <p data-en="Elixir Lab is free and MIT-licensed. The code is on &lt;a href=&quot;https://github.com/Nicolay008/deck-ai&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;GitHub&lt;/a&gt;.">Elixir Lab es libre, con licencia MIT. El código está en <a href="https://github.com/Nicolay008/deck-ai" target="_blank" rel="noopener">GitHub</a>.</p>
+  <h3 data-en="Want to contribute?">¿Quieres colaborar?</h3>
+  <p data-en="Report bugs or suggest ideas in the repository’s &lt;a href=&quot;https://github.com/Nicolay008/deck-ai/issues&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;Issues&lt;/a&gt;, or improve the code with a pull request. Every bit helps, and if it’s useful to you, a ⭐ on GitHub helps more people find it.">Reporta errores o propón ideas en la sección <a href="https://github.com/Nicolay008/deck-ai/issues" target="_blank" rel="noopener">Issues</a> del repositorio, o mejora el código con un pull request. Toda ayuda suma, y si te sirve, una ⭐ en GitHub ayuda a que más gente lo encuentre.</p>
+  <p class="studio" data-en="Made by &lt;b id=&quot;studioName&quot;&gt;&lt;/b&gt;">Desarrollado por <b id="studioName"></b></p>
+  <button class="btn" id="aboutClose" data-en="Close">Cerrar</button>
+</dialog>
+<footer><button class="link" id="aboutOpen" data-en="About Elixir Lab · Contribute">Acerca de Elixir Lab · Colabora</button>
+<span data-en="This material is unofficial and is not endorsed by Supercell. For more information see Supercell’s Fan Content Policy: &lt;a href=&quot;https://www.supercell.com/fan-content-policy&quot; style=&quot;color:inherit&quot;&gt;www.supercell.com/fan-content-policy&lt;/a&gt;.">Este material no es oficial y no está respaldado por Supercell. Para más información, consulta la política de contenido de fans de Supercell: <a href="https://www.supercell.com/fan-content-policy" style="color:inherit">www.supercell.com/fan-content-policy</a>.</span></footer>
 
 <script>
 let CARDS = []; // se carga desde cards.json: [nombre, coste, rareza, icono]
 
 const $ = id => document.getElementById(id);
+// ================= IDIOMA =================
+const LANG_KEY="elixirLang";
+const LANG=(()=>{try{const v=localStorage.getItem(LANG_KEY); if(v==="es"||v==="en") return v;}catch(e){}
+  return (navigator.language||"es").toLowerCase().startsWith("es")?"es":"en";})();
+const L=(es,en)=>LANG==="en"?en:es;
+const tr=L; // alias para funciones donde "L" es otra variable
+document.documentElement.lang=LANG;
+if(LANG==="en") document.querySelectorAll("[data-en]").forEach(el=>{el.innerHTML=el.dataset.en;});
+$("langBtn").textContent=LANG==="en"?"ES":"EN";
+$("langBtn").addEventListener("click",()=>{try{localStorage.setItem(LANG_KEY,LANG==="en"?"es":"en");}catch(e){} location.reload();});
+const RAR_EN={"Común":"Common","Especial":"Rare","Épica":"Epic","Legendaria":"Legendary","Campeón":"Champion"};
+const LOCALE=L("es-PE","en-US");
 const KEY = "elixirQuizV2";
 let deck=[], idx=0, hits=0, streak=0, misses=[], answers=[];
 let timeLimit=5, timer=null, t0=0, locked=false, nextT=null, lives=3;
@@ -387,9 +428,22 @@ function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor
 function load(){try{return JSON.parse(localStorage.getItem(KEY))||{attempts:[],cards:{}};}catch(e){return {attempts:[],cards:{}};}}
 function save(h){try{localStorage.setItem(KEY,JSON.stringify(h));}catch(e){}}
 function show(id){["setup","game","results","count","countResults"].forEach(s=>$(s).classList.toggle("hidden",s!==id));}
-const fmt = x => x.toFixed(1).replace(".",",");
+const fmt = x => LANG==="en"?x.toFixed(1):x.toFixed(1).replace(".",",");
 
 // historic difficulty: errors first, then slowness
+// clave estable de una carta y su nombre visible
+const cardKey=c=>c[4]||c[0];
+const keyName=k=>{const c=CARDS.find(x=>cardKey(x)===k||x[5]===k||x[0]===k); return c?c[0]:k;};
+// las estadísticas antiguas se guardaron por nombre en español: se pasan a la clave estable
+function migrateStats(){
+  const h=load(); let changed=false;
+  Object.keys(h.cards).forEach(k=>{
+    const c=CARDS.find(x=>x[5]===k);
+    if(c && cardKey(c)!==k){ const dst=h.cards[cardKey(c)]||{seen:0,errors:0,timeSum:0,timeN:0,dev:0}, src=h.cards[k];
+      ["seen","errors","timeSum","timeN","dev"].forEach(f=>dst[f]+=src[f]||0); h.cards[cardKey(c)]=dst; delete h.cards[k]; changed=true; }
+  });
+  if(changed) save(h);
+}
 function hardCards(h){
   return Object.entries(h.cards)
     .filter(([,c])=>c.errors>0)
@@ -398,19 +452,19 @@ function hardCards(h){
 }
 
 function refreshSetup(){
-  updateDescs(); if(CARDS.length) renderPreviews();
+  updateDescs(); if(CARDS.length){ renderPreviews(); renderBadges(); }
   const isCount=document.querySelector('input[name="mode"]:checked').value==="count";
   $("costOpts").classList.toggle("hidden",isCount);
   $("countOpts").classList.toggle("hidden",!isCount);
   const h=load();
   const last=h.attempts[h.attempts.length-1];
   const bestH=h.attempts.length?Math.max(...h.attempts.map(attHits)):0;
-  $("best").textContent = last ? `Última partida: ${attHits(last)} cartas · Récord: ${bestH} cartas` : "";
+  $("best").textContent = last ? L(`Última partida: ${attHits(last)} cartas · Récord: ${bestH} cartas`,`Last run: ${attHits(last)} cards · Best: ${bestH} cards`) : "";
   $("practiceHard").classList.toggle("hidden", isCount || hardCards(h).length===0);
   if(isCount){
     const ch=loadC(); const l=ch.attempts[ch.attempts.length-1];
     const b=ch.attempts.reduce((m,a)=>!m||a.nota>m.nota?a:m,null);
-    $("best").textContent = l ? `Conteo · última nota: ${fmt(l.nota)}/20 · mejor: ${fmt(b.nota)}/20` : "";
+    $("best").textContent = l ? L(`Conteo · última nota: ${fmt(l.nota)}/20 · mejor: ${fmt(b.nota)}/20`,`Tracking · last score: ${fmt(l.nota)}/20 · best: ${fmt(b.nota)}/20`) : "";
   }
 }
 
@@ -418,7 +472,7 @@ function refreshSetup(){
 for(let i=0;i<10;i++) $("bar").appendChild(document.createElement("i"));
 for(let n=1;n<=9;n++){
   const b=document.createElement("button");
-  b.className="drop"; b.dataset.v=n; b.setAttribute("aria-label",`${n} de elixir`);
+  b.className="drop"; b.dataset.v=n; b.setAttribute("aria-label",L(`${n} de elixir`,`${n} elixir`));
   b.innerHTML=`<span>${n}</span>`;
   b.addEventListener("click",()=>answer(n));
   $("drops").appendChild(b);
@@ -441,15 +495,15 @@ function next(){
   if(idx>=deck.length || lives<=0) return finish();
   locked=false;
   const [name,,rarity]=deck[idx];
-  $("name").textContent=name; $("rarity").textContent=rarity;
+  $("name").textContent=name; $("rarity").textContent=L(rarity,RAR_EN[rarity]||rarity);
   const im=$("cardImg"), url=deck[idx][3];
   if(url){im.src=url; im.style.visibility="visible";} else {im.removeAttribute("src"); im.style.visibility="hidden";}
   $("feedback").textContent=""; $("feedback").className="feedback";
   $("card").className="card";
   document.querySelectorAll(".drop").forEach(b=>{b.className="drop";b.disabled=false;});
   $("progress").textContent=heartsTxt();
-  $("streak").textContent=`Racha ${streak}`;
-  $("points").textContent=`${hits} acierto${hits===1?"":"s"}`;
+  $("streak").textContent=`${L("Racha","Streak")} ${streak}`;
+  $("points").textContent=L(`${hits} acierto${hits===1?"":"s"}`,`${hits} correct`);
   t0=performance.now();
   clearInterval(timer); timer=setInterval(tick,50); tick();
 }
@@ -467,7 +521,7 @@ function answer(v){
   // elixir desviado: lo que te equivocas al contar; sin respuesta = no contaste nada
   const dev = v===null ? cost : Math.abs(v-cost);
   const ok = v===cost;
-  answers.push({name,cost,v,t,dev,ok});
+  answers.push({name,key:cardKey(deck[idx]),cost,v,t,dev,ok});
   document.querySelectorAll(".drop").forEach(b=>{
     b.disabled=true;
     if(+b.dataset.v===cost) b.classList.add("right");
@@ -477,14 +531,14 @@ function answer(v){
     hits++; streak++;
     $("card").classList.add("ok"); $("feedback").classList.add("ok");
     let bonus="";
-    if(streak%10===0){ crowns++; if(lives<MAX_LIVES){ lives++; bonus=" · ¡+1 👑 y torre reconstruida!"; } else bonus=" · ¡+1 👑!"; }
+    if(streak%10===0){ crowns++; if(lives<MAX_LIVES){ lives++; bonus=L(" · ¡+1 👑 y torre reconstruida!"," · +1 👑 and tower rebuilt!"); } else bonus=" · "+L("¡+1 👑!","+1 👑!"); }
     $("progress").textContent=heartsTxt();
-    $("feedback").textContent=`Correcto, ${cost} de elixir${bonus}`;
+    $("feedback").textContent=L(`Correcto, ${cost} de elixir${bonus}`,`Correct, ${cost} elixir${bonus}`);
   }else{
     streak=0; misses.push({card:deck[idx],you:v});
     $("card").classList.add("bad"); $("feedback").classList.add("bad");
     lives--; $("progress").textContent=heartsTxt();
-    $("feedback").textContent = (v===null ? `Se acabó el tiempo: cuesta ${cost}` : `Cuesta ${cost}, no ${v}`) + (lives<=0?" · Cayó tu torre del rey":"");
+    $("feedback").textContent = (v===null ? L(`Se acabó el tiempo: cuesta ${cost}`,`Time’s up: it costs ${cost}`) : L(`Cuesta ${cost}, no ${v}`,`It costs ${cost}, not ${v}`)) + (lives<=0?L(" · Cayó tu torre del rey"," · Your King Tower fell"):"");
   }
   idx++;
   nextT=setTimeout(next, ok?650:1300);
@@ -501,8 +555,8 @@ function finish(){
   const avgT=answers.reduce((s,a)=>s+a.t,0)/n;
 
   const done = lives>0;  // terminó el mazo con vidas: maestría completa
-  $("score").textContent=`${hits} ${hits===1?"carta":"cartas"}`;
-  $("gradeSub").textContent= done ? `¡Maestría completa! Acertaste las ${deck.length} cartas · nota ${fmt(nota)}/20` : `Llegaste a ${hits} de ${deck.length}${crowns?` · ${crowns} 👑`:""} · nota ${fmt(nota)}/20`;
+  $("score").textContent=`${hits} ${hits===1?L("carta","card"):L("cartas","cards")}`;
+  $("gradeSub").textContent= done ? L(`¡Maestría completa! Acertaste las ${deck.length} cartas · nota ${fmt(nota)}/20`,`Mastery complete! You got all ${deck.length} cards · score ${fmt(nota)}/20`) : L(`Llegaste a ${hits} de ${deck.length}${crowns?` · ${crowns} 👑`:""} · nota ${fmt(nota)}/20`,`You reached ${hits} of ${deck.length}${crowns?` · ${crowns} 👑`:""} · score ${fmt(nota)}/20`);
   $("acc").textContent=`${Math.round(acc*100)}%`;
   $("dev").textContent=dev;
   $("avg").textContent=`${fmt(avgT)} s`;
@@ -510,7 +564,7 @@ function finish(){
   const ul=$("misses"); ul.innerHTML="";
   misses.forEach(m=>{
     const li=document.createElement("li");
-    li.innerHTML=`<span>${m.card[0]}</span><span><span class="you">${m.you===null?"sin respuesta":m.you}</span> → <span class="real">${m.card[1]}</span></span>`;
+    li.innerHTML=`<span>${m.card[0]}</span><span><span class="you">${m.you===null?L("sin respuesta","no answer"):m.you}</span> → <span class="real">${m.card[1]}</span></span>`;
     ul.appendChild(li);
   });
   $("missWrap").classList.toggle("hidden",misses.length===0);
@@ -519,12 +573,15 @@ function finish(){
   // guardar historial
   const h=load();
   answers.forEach(a=>{
-    const c=h.cards[a.name]||(h.cards[a.name]={seen:0,errors:0,timeSum:0,timeN:0,dev:0});
+    const c=h.cards[a.key]||(h.cards[a.key]={seen:0,errors:0,timeSum:0,timeN:0,dev:0});
     c.seen++; c.dev+=a.dev;
     if(!a.ok) c.errors++;
     if(a.v!==null){c.timeSum+=a.t;c.timeN++;}
   });
+  const prevBest=h.attempts.length?Math.max(...h.attempts.map(attHits)):0;
   recordBanner($("recBanner"), h.attempts.filter(a=>a.t===timeLimit).map(attHits), hits);
+  const newB=BADGES.filter(b=>hits>=badgeNeed(b) && prevBest<badgeNeed(b));
+  if(newB.length){ const el=$("recBanner"); el.className="banner rec"; el.textContent=`${L("¡Nueva insignia!","New badge!")} ${newB.map(b=>b.i+" "+b.t).join(" · ")}`; }
   h.attempts.push({date:new Date().toISOString(),n,t:timeLimit,nota,acc,dev,avgT,hits});
   h.attempts=h.attempts.slice(-100);
   save(h);
@@ -535,12 +592,12 @@ function finish(){
 function renderHistory(h){
   const hard=hardCards(h).slice(0,10);
   $("hardBody").innerHTML = hard.length ? hard.map(c=>
-    `<tr><td>${c.name}</td><td class="num tag-bad">${c.errors} de ${c.seen}</td><td class="num">${c.avg===null?"—":fmt(c.avg)+" s"}</td><td class="num">${c.dev}</td></tr>`
-  ).join("") : `<tr><td colspan="4">Sin fallos todavía.</td></tr>`;
+    `<tr><td>${keyName(c.name)}</td><td class="num tag-bad">${c.errors} ${L("de","of")} ${c.seen}</td><td class="num">${c.avg===null?"—":fmt(c.avg)+" s"}</td><td class="num">${c.dev}</td></tr>`
+  ).join("") : `<tr><td colspan="4">${L("Sin fallos todavía.","No misses yet.")}</td></tr>`;
   const at=h.attempts.slice(-8).reverse();
   $("attemptBody").innerHTML = at.map(a=>{
     const d=new Date(a.date);
-    const day=d.toLocaleDateString("es-PE",{day:"2-digit",month:"2-digit"})+" "+d.toLocaleTimeString("es-PE",{hour:"2-digit",minute:"2-digit"});
+    const day=d.toLocaleDateString(LOCALE,{day:"2-digit",month:"2-digit"})+" "+d.toLocaleTimeString(LOCALE,{hour:"2-digit",minute:"2-digit"});
     return `<tr><td>${day}</td><td class="num">${attHits(a)}</td><td class="num">${Math.round(a.acc*100)}%</td><td class="num">${a.dev}</td><td class="num">${fmt(a.avgT)} s</td></tr>`;
   }).join("");
 }
@@ -552,14 +609,20 @@ $("start").addEventListener("click",()=>{
 
 // ================= PANTALLA DE INICIO =================
 const IX='<i class="ix" aria-hidden="true"></i>';
-const DESC={
-  time:{8:"Tienes 8 segundos por carta. Para empezar con calma.",5:"Tienes 5 segundos por carta. El ritmo de una partida.",3:"Solo 3 segundos por carta: o te sale solo o fallas."},
+const DESC=L({
+  time:{8:"⏱ 8 s por carta. Para aprender los costes sin presión.",5:"⏱ 5 s por carta. El tiempo que tienes para decidir en una partida real.",3:"⏱ 3 s por carta. Reflejos de pro: ves la carta y ya sabes su coste."},
   diff:{facil:`El rival suelta 3 o 4 cartas seguidas, sin reloj. Si aciertas, la siguiente ronda trae una carta más.`,
         intermedio:`Ahora el reloj también cuenta: <b>⏱ 3 segundos = +1 gota de elixir ${IX}</b>. Si aciertas, también suben las cartas.`,
         medio:`Como en el juego: <b>⏱ 2,8 segundos = +1 gota ${IX}</b>, y las 3 últimas rondas son en doble elixir. Solo verás la última carta que jugó.`},
   rtime:{20:`Donde todos empiezan: cada carta muestra su coste en elixir ${IX} y tienes 20 segundos.`,10:"La cima de la Senda de Leyendas: sin ayudas y solo 10 segundos. ¿Estás a la altura?"}
-};
-const LEVEL_NAME={"Fácil":"Primeros pasos","Intermedio":"Con reloj","Medio":"Partida real","Difícil":"Doble elixir"};
+},{
+  time:{8:"⏱ 8 s per card. Learn the costs with no pressure.",5:"⏱ 5 s per card. The time you get to decide in a real match.",3:"⏱ 3 s per card. Pro reflexes: you see the card and already know its cost."},
+  diff:{facil:`Your opponent drops 3 or 4 cards in a row, no clock. Get it right and the next round adds one more card.`,
+        intermedio:`Now the clock counts too: <b>⏱ 3 seconds = +1 elixir drop ${IX}</b>. Get it right and the cards go up too.`,
+        medio:`Just like the game: <b>⏱ 2.8 seconds = +1 drop ${IX}</b>, and the last 3 rounds are double elixir. You only see their latest card.`},
+  rtime:{20:`Where everyone starts: each card shows its elixir cost ${IX} and you get 20 seconds.`,10:"The top of the Path of Legends: no help and only 10 seconds. Are you up to it?"}
+});
+const LEVEL_NAME=L({"Fácil":"Primeros pasos","Intermedio":"Con reloj","Medio":"Partida real","Difícil":"Doble elixir"},{"Fácil":"First steps","Intermedio":"On the clock","Medio":"Real match","Difícil":"Double elixir"});
 function updateDescs(){
   Object.keys(DESC).forEach(k=>{
     const el=$("d-"+k), r=document.querySelector(`input[name="${k}"]:checked`);
@@ -567,7 +630,7 @@ function updateDescs(){
   });
 }
 function cardVisual(name){
-  const c=CARDS.find(x=>x[0]===name); if(!c) return "";
+  const c=CARDS.find(x=>(x[5]||x[0])===name); if(!c) return "";
   return c[3]?`<img src="${c[3]}" alt="${c[0]}">`:`<span class="pvname">${c[0]}</span>`;
 }
 function renderPreviews(){
@@ -581,11 +644,11 @@ $("again").addEventListener("click",startFromSettings);
 $("retryMisses").addEventListener("click",()=>start(shuffle(misses.map(m=>m.card))));
 $("practiceHard").addEventListener("click",()=>{
   const names=new Set(hardCards(load()).slice(0,15).map(c=>c.name));
-  start(shuffle(CARDS.filter(c=>names.has(c[0]))));
+  start(shuffle(CARDS.filter(c=>names.has(cardKey(c))||names.has(c[5])||names.has(c[0]))));
 });
 $("back").addEventListener("click",()=>{refreshSetup();show("setup");});
 $("reset").addEventListener("click",()=>{
-  if(confirm("¿Borrar todas tus notas y estadísticas?")){save({attempts:[],cards:{}});renderHistory(load());refreshSetup();}
+  if(confirm(L("¿Borrar todas tus notas y estadísticas?","Delete all your scores and stats?"))){save({attempts:[],cards:{}});renderHistory(load());refreshSetup();}
 });
 
 
@@ -600,29 +663,42 @@ function progressChart(el, attempts, key, groups, current, maxV=20){
   const x=i=>L+(maxN===1?iw/2:i*iw/(maxN-1)), y=v=>T+ih*(1-v/maxV);
   let g='';
   [0,.25,.5,.75,1].map(f=>Math.round(f*maxV)).forEach((v,i)=>{g+=`<line class="grid" x1="${L}" x2="${W-R}" y1="${y(v)}" y2="${y(v)}" ${i%2?'opacity=".45"':''}/><text class="axis" x="${L-6}" y="${y(v)+3}" text-anchor="end">${v}</text>`;});
-  g+=`<text class="axis" x="${W-R}" y="${H-6}" text-anchor="end">intentos →</text>`;
+  g+=`<text class="axis" x="${W-R}" y="${H-6}" text-anchor="end">${tr("intentos →","attempts →")}</text>`;
   const legend=[];
   groups.forEach(gr=>{
     const pts=(byG[gr.id]||[]).slice(-15); if(!pts.length) return;
     const col=gr.color, isCur=gr.id===current;
     const best=Math.max(...pts.map(p=>p.nota));
-    if(isCur) g+=`<line class="recline" stroke="${col}" x1="${L}" x2="${W-R}" y1="${y(best)}" y2="${y(best)}"/><text class="axis" x="${W-R}" y="${y(best)-4}" text-anchor="end" style="fill:${col}">récord ${fmtV(best)}</text>`;
+    if(isCur) g+=`<line class="recline" stroke="${col}" x1="${L}" x2="${W-R}" y1="${y(best)}" y2="${y(best)}"/><text class="axis" x="${W-R}" y="${y(best)-4}" text-anchor="end" style="fill:${col}">${tr("récord","best")} ${fmtV(best)}</text>`;
     const d=pts.map((p,i)=>`${i?'L':'M'}${x(i).toFixed(1)},${y(p.nota).toFixed(1)}`).join(' ');
     g+=`<path d="${d}" fill="none" stroke="${col}" stroke-width="${isCur?3:2}" stroke-linejoin="round" stroke-linecap="round" opacity="${isCur?1:.45}"/>`;
     pts.forEach((p,i)=>{const last=i===pts.length-1&&isCur;
       g+=`<circle cx="${x(i).toFixed(1)}" cy="${y(p.nota).toFixed(1)}" r="${last?5:3}" fill="${col}" opacity="${isCur?1:.45}"${last?' stroke="var(--surface)" stroke-width="2"':''}><title>${fmtV(p.nota)}</title></circle>`;});
     legend.push(`<span><i style="background:${col}"></i>${gr.label}</span>`);
   });
-  el.innerHTML=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Evolución de tus notas">${g}</svg><div class="legend">${legend.join('')}</div>`;
+  el.innerHTML=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${tr("Evolución de tus notas","Your progress")}">${g}</svg><div class="legend">${legend.join('')}</div>`;
 }
 function recordBanner(el, prevNotas, nota){
   el.className="banner";
-  if(!prevNotas.length){el.classList.add("first");el.textContent="Primera partida en este nivel: ya tienes tu marca a batir";}
-  else if(nota>Math.max(...prevNotas)){el.classList.add("rec");el.textContent=`¡Nuevo récord! Superas tu ${fmtV(Math.max(...prevNotas))}`;}
+  if(!prevNotas.length){el.classList.add("first");el.textContent=L("Primera partida en este nivel: ya tienes tu marca a batir","First run at this level: now you have a score to beat");}
+  else if(nota>Math.max(...prevNotas)){el.classList.add("rec");el.textContent=L(`¡Nuevo récord! Superas tu ${fmtV(Math.max(...prevNotas))}`,`New record! You beat your ${fmtV(Math.max(...prevNotas))}`);}
   else el.classList.add("hidden");
 }
-const COST_GROUPS=[{id:8,label:"Fácil",color:"var(--ok)"},{id:5,label:"Normal",color:"var(--elixir)"},{id:3,label:"Difícil",color:"var(--gold)"}];
-const COUNT_GROUPS=[{id:"Fácil",label:"Primeros pasos",color:"var(--ok)"},{id:"Intermedio",label:"Con reloj",color:"#3FA9F5"},{id:"Medio",label:"Partida real",color:"var(--elixir)"},{id:"Difícil",label:"Doble elixir",color:"var(--gold)"}];
+const COST_GROUPS=[{id:8,label:L("Fácil","Easy"),color:"var(--ok)"},{id:5,label:"Normal",color:"var(--elixir)"},{id:3,label:L("Difícil","Hard"),color:"var(--gold)"}];
+const COUNT_GROUPS=[{id:"Fácil",label:LEVEL_NAME["Fácil"],color:"var(--ok)"},{id:"Intermedio",label:LEVEL_NAME["Intermedio"],color:"#3FA9F5"},{id:"Medio",label:LEVEL_NAME["Medio"],color:"var(--elixir)"},{id:"Difícil",label:LEVEL_NAME["Difícil"],color:"var(--gold)"}];
+
+
+// ================= INSIGNIAS Y ACERCA DE =================
+const STUDIO="Inka Lobby GG";   // nombre del estudio: cámbialo aquí
+$("studioName").textContent=STUDIO;
+$("aboutOpen").addEventListener("click",()=>$("about").showModal());
+$("aboutClose").addEventListener("click",()=>$("about").close());
+const BADGES=[{n:25,i:"🥉",t:L("25 cartas","25 cards")},{n:50,i:"🥈",t:L("50 cartas","50 cards")},{n:100,i:"🥇",t:L("100 cartas","100 cards")},{n:Infinity,i:"👑",t:L("Maestría","Mastery")}];
+const badgeNeed=b=>b.n===Infinity?CARDS.length:b.n;
+function renderBadges(){
+  const h=load(); const best=h.attempts.length?Math.max(...h.attempts.map(attHits)):0;
+  $("badges").innerHTML=BADGES.map(b=>`<div class="badge${best>=badgeNeed(b)?" on":""}" title="${b.t}"><span class="bi">${b.i}</span>${b.t}</div>`).join("");
+}
 
 // ================= MODO CONTEO =================
 const CKEY="elixirCountV1";
@@ -639,18 +715,18 @@ function loadC(){try{return JSON.parse(localStorage.getItem(CKEY))||{attempts:[]
 function saveC(h){try{localStorage.setItem(CKEY,JSON.stringify(h));}catch(e){}}
 const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
 // n cartas al azar sin repetir la misma carta en dos formas (normal, Evo, Héroe)
-const baseName=n=>n.replace(/ \((Evo|Héroe)\)$/,"");
+const baseName=n=>n.replace(/ \((Evo|Héroe|Hero)\)$/,"");
 function pickUnique(n){
   const seen=new Set(), out=[];
   for(const c of shuffle(CARDS)){ const b=baseName(c[0]); if(seen.has(b)) continue; seen.add(b); out.push(c); if(out.length===n) break; }
   return out;
 }
-const f1=x=>(Math.round(x*10)/10).toString().replace(".",",");
+const f1=x=>{const t=(Math.round(x*10)/10).toString(); return LANG==="en"?t:t.replace(".",",");};
 
 for(let i=0;i<10;i++) $("cBar").appendChild(document.createElement("i"));
 for(let n=0;n<=10;n++){
   const b=document.createElement("button");
-  b.className="nbtn"; b.dataset.v=n; b.textContent=n; b.setAttribute("aria-label",`${n} de elixir`);
+  b.className="nbtn"; b.dataset.v=n; b.textContent=n; b.setAttribute("aria-label",L(`${n} de elixir`,`${n} elixir`));
   b.addEventListener("click",()=>cAnswer(n));
   $("nums").appendChild(b);
 }
@@ -705,7 +781,7 @@ function genScenario(L){
 
 // gotas visibles en el nivel "Regla 3 s": cada 3 s aparece una gota; las que se pierden a 10, en gris
 function timeHtml(st){
-  const base = st.opening?`⏱ inicio: espera ${st.secs} s sin jugar`:`⏱ pasan ${st.secs} s`;
+  const base = st.opening?L(`⏱ inicio: espera ${st.secs} s sin jugar`,`⏱ start: waits ${st.secs} s without playing`):L(`⏱ pasan ${st.secs} s`,`⏱ ${st.secs} s pass`);
   if(!cLevel.easyTime) return base;
   const got=Math.round(st.gain-st.leak), lost=Math.round(st.leak);
   let d='';
@@ -736,16 +812,16 @@ function cPlay(){
   cLocked=true; clearInterval(cTimer); clearTimeout(cReveal);
   $("cReplay").classList.remove("hidden");
   $("cProgress").textContent=`${cIdx+1} / ${cRounds}`;
-  $("cStreak").textContent=`Racha ${cStreak}`;
+  $("cStreak").textContent=`${L("Racha","Streak")} ${cStreak}`;
   const ex=cRes.filter(r=>r.ok).length;
-  $("cPoints").textContent=`${ex} exacta${ex===1?"":"s"}`;
-  $("cPhase").innerHTML=cCur.easyTime?`⏱ 3 s = +1 ${IX}`:(cCur.double?`Doble elixir · ⏱ 1,4 s = +1 ${IX}`:(cCur.time?`⏱ 2,8 s = +1 ${IX}`:"Primeros pasos · el reloj no cuenta"));
+  $("cPoints").textContent=L(`${ex} exacta${ex===1?"":"s"}`,`${ex} exact`);
+  $("cPhase").innerHTML=cCur.easyTime?`⏱ 3 s = +1 ${IX}`:(cCur.double?L(`Doble elixir · ⏱ 1,4 s = +1 ${IX}`,`Double elixir · ⏱ 1.4 s = +1 ${IX}`):(cCur.time?L(`⏱ 2,8 s = +1 ${IX}`,`⏱ 2.8 s = +1 ${IX}`):L("Primeros pasos · el reloj no cuenta","First steps · the clock doesn’t count")));
   $("cCard").className="card";
   const feed=$("feed"); feed.innerHTML=""; feed.classList.toggle("solo",cCur.solo);
   feed.classList.toggle("noname",!$("showNames").checked);
   ["cAsk","cBar","nums","cNext","breakdown"].forEach(id=>$(id).classList.add("hidden"));
   $("cFeedback").textContent=""; $("cFeedback").className="feedback";
-  const lines=[{cls:"start",html:cScn.opening?`Empieza la partida: el rival tiene <b>5</b> de elixir`:`El rival tiene <b>${cScn.start}</b> de elixir`}]
+  const lines=[{cls:"start",html:cScn.opening?L(`Empieza la partida: el rival tiene <b>5</b> de elixir`,`Match starts: your opponent has <b>5</b> elixir`):L(`El rival tiene <b>${cScn.start}</b> de elixir`,`Your opponent has <b>${cScn.start}</b> elixir`)}]
     .concat(cScn.steps.map(st=>st.type==="time"
       ?{cls:"time",html:timeHtml(st)}
       :{cls:"play",html:`${st.card[3]?`<img class="mini" src="${st.card[3]}" alt="">`:`<i class="chip ${RCLASS[st.card[2]]}"></i>`}<b>${st.card[0]}</b>${ANSWER_TIME>10?`<span class="qdrop sm" aria-label="cuesta ${st.card[1]}">${st.card[1]}</span>`:""}`}));
@@ -793,19 +869,19 @@ function cAnswer(v){
   });
   $("cCard").classList.add(ok?"ok":"bad");
   const fb=$("cFeedback"); fb.classList.add(ok?"ok":"bad");
-  fb.textContent = ok?`Exacto: ${a}${cPlays>prevPlays?` · ¡Sube a ${cPlays} cartas!`:""}`:(v===null?`Se acabó el tiempo: tenía ${a}`:`Tenía ${a}, dijiste ${v}`);
+  fb.textContent = ok?L(`Exacto: ${a}${cPlays>prevPlays?` · ¡Sube a ${cPlays} cartas!`:""}`,`Exact: ${a}${cPlays>prevPlays?` · Up to ${cPlays} cards!`:""}`):(v===null?L(`Se acabó el tiempo: tenía ${a}`,`Time’s up: they had ${a}`):L(`Tenía ${a}, dijiste ${v}`,`They had ${a}, you said ${v}`));
   // desglose paso a paso
   const bd=$("breakdown"); bd.innerHTML="";
   const row=(l,r,cls="")=>{const li=document.createElement("li");li.innerHTML=`<span class="${cls}">${l}</span><span>${r}</span>`;bd.appendChild(li);};
-  row(cScn.opening?"Empieza la partida con":"Empieza con",cScn.start);
+  row(cScn.opening?L("Empieza la partida con","Match starts with"):L("Empieza con","Starts with"),cScn.start);
   cScn.steps.forEach(st=>{
     if(st.type==="play") row(`− ${st.card[1]} ${st.card[0]}`,f1(st.after));
     else{
       row(`+ ${f1(st.gain-st.leak)} ${IX} en ${st.secs} s${st.opening?" (espera inicial)":""}`,f1(st.after));
-      if(st.leak>0.05) row(`Llegó a 10: desperdició ${f1(st.leak)}`,"","leak");
+      if(st.leak>0.05) row(L(`Llegó a 10: desperdició ${f1(st.leak)}`,`Hit 10: wasted ${f1(st.leak)}`),"","leak");
     }
   });
-  if(Math.abs(cScn.exact-a)>1e-9) row(`Le queda ${f1(cScn.exact)}: puede usar ${a}`,"");
+  if(Math.abs(cScn.exact-a)>1e-9) row(L(`Le queda ${f1(cScn.exact)}: puede usar ${a}`,`They have ${f1(cScn.exact)}: can use ${a}`),"");
   bd.classList.remove("hidden");
   $("cNext").classList.remove("hidden");
   $("cNext").focus({preventScroll:true});
@@ -823,8 +899,8 @@ function cFinish(){
   const pts=cRes.reduce((s,r)=>s+(r.ok?0.7+0.3*(1-r.t/ANSWER_TIME):(r.near?0.3:0)),0);
   const nota=20*pts/n, dev=cRes.reduce((s,r)=>s+r.dev,0), avgT=cRes.reduce((s,r)=>s+r.t,0)/n;
   $("cScore").textContent=`${fmt(nota)} / 20`;
-  $("cSub").textContent=`${LEVEL_NAME[cLevel.label]}${ANSWER_TIME<=10?" 💀":""} · ${n} rondas`;
-  $("cAcc").textContent=`${ex} de ${n}`;
+  $("cSub").textContent=`${LEVEL_NAME[cLevel.label]}${ANSWER_TIME<=10?" 💀":""} · ${n} ${L("rondas","rounds")}`;
+  $("cAcc").textContent=`${ex} ${L("de","of")} ${n}`;
   $("cDev").textContent=dev;
   $("cAvg").textContent=`${fmt(avgT)} s`;
   const h=loadC();
@@ -834,28 +910,31 @@ function cFinish(){
   progressChart($("countChart"), h.attempts, a=>a.level, COUNT_GROUPS, cLevel.label);
   $("cAttemptBody").innerHTML=h.attempts.slice(-8).reverse().map(a=>{
     const d=new Date(a.date);
-    const day=d.toLocaleDateString("es-PE",{day:"2-digit",month:"2-digit"})+" "+d.toLocaleTimeString("es-PE",{hour:"2-digit",minute:"2-digit"});
+    const day=d.toLocaleDateString(LOCALE,{day:"2-digit",month:"2-digit"})+" "+d.toLocaleTimeString(LOCALE,{hour:"2-digit",minute:"2-digit"});
     return `<tr><td>${day}</td><td>${LEVEL_NAME[a.level]||a.level}${a.rt===10||a.rt===undefined?" 💀":""}</td><td class="num">${fmt(a.nota)}</td><td class="num">${a.ex}/${a.n}</td><td class="num">${a.dev}</td></tr>`;
   }).join("");
 }
 $("cAgain").addEventListener("click",startCount);
 $("cBack").addEventListener("click",()=>{refreshSetup();show("setup");});
-$("start").disabled=true; $("start").textContent="Cargando cartas…";
+$("start").disabled=true; $("start").textContent=L("Cargando cartas…","Loading cards…");
 fetch("cards.json").then(r=>{if(!r.ok) throw new Error(r.status); return r.json();})
   .then(data=>{
     // cada evolución y cada héroe es una entrada más, con su imagen; el coste es el de la carta normal
     CARDS=[];
     data.filter(c=>Number.isInteger(c.coste)).forEach(c=>{
-      CARDS.push([c.nombre,c.coste,c.rareza,c.icono]);
-      if(c.icono_evo)   CARDS.push([`${c.nombre} (Evo)`,c.coste,c.rareza,c.icono_evo]);
-      if(c.icono_heroe) CARDS.push([`${c.nombre} (Héroe)`,c.coste,c.rareza,c.icono_heroe]);
+      // [nombre visible, coste, rareza, imagen, clave estable (inglés), nombre en español]
+      const nm=L(c.nombre,c.nombre_en||c.nombre), en=c.nombre_en||c.nombre;
+      CARDS.push([nm,c.coste,c.rareza,c.icono,en,c.nombre]);
+      if(c.icono_evo)   CARDS.push([`${nm} (Evo)`,c.coste,c.rareza,c.icono_evo,`${en} (Evo)`,`${c.nombre} (Evo)`]);
+      if(c.icono_heroe) CARDS.push([`${nm} ${L("(Héroe)","(Hero)")}`,c.coste,c.rareza,c.icono_heroe,`${en} (Hero)`,`${c.nombre} (Héroe)`]);
     });
     CARDS.forEach(c=>{const i=new Image(); i.src=c[3]||"";}); // precarga
-    $("start").disabled=false; $("start").textContent="Empezar";
+    migrateStats();
+    $("start").disabled=false; $("start").textContent=L("Empezar","Start");
     refreshSetup();
   })
   .catch(err=>{
-    $("start").textContent="No se pudo cargar cards.json";
+    $("start").textContent=L("No se pudo cargar cards.json","Couldn’t load cards.json");
     $("best").innerHTML='<span class="loaderr">Abre la página con un servidor (no como archivo) y comprueba que cards.json está en la misma carpeta.</span>';
   });
 </script>
