@@ -183,6 +183,11 @@ footer{max-width:30rem;margin:0 auto;padding:0 1rem 1.5rem;font-size:.8rem;color
 .stages span b{display:inline-grid;place-items:center;width:1.4em;height:1.4em;margin-right:.3em;border-radius:50%;background:var(--track);color:var(--elixir);font-size:.85em}
 .check{display:flex;align-items:center;gap:.55rem;font-weight:600;color:var(--muted);margin:0 0 1.25rem;cursor:pointer}
 .check input{width:1.15rem;height:1.15rem;accent-color:var(--elixir)}
+.lives-intro .challenge{display:block;font-family:"Lilita One","Arial Rounded MT Bold",sans-serif;font-weight:400;font-size:1.15rem;margin-bottom:.25rem;color:var(--elixir)}
+.lives-intro{color:var(--ink);background:var(--track);border-radius:.8rem;padding:.7rem .85rem;margin:0 0 1.1rem;font-size:.95rem}
+.seg label{display:flex}
+.seg label>span{flex:1;display:flex;align-items:center;justify-content:center;text-align:center}
+.stages label>span{flex-direction:column}
 .desc{margin:.45rem 0 0;font-size:.92rem;min-height:1.4em}
 
 .edrops{display:inline-flex;gap:4px;margin-left:.6rem;vertical-align:middle}
@@ -223,16 +228,7 @@ footer{max-width:30rem;margin:0 auto;padding:0 1rem 1.5rem;font-size:.8rem;color
     </div>
 
     <div id="costOpts">
-      <fieldset>
-        <legend>¿Cuántas cartas quieres practicar?</legend>
-        <div class="seg">
-          <label><input type="radio" name="count" value="10"><span>10</span></label>
-          <label><input type="radio" name="count" value="20" checked><span>20</span></label>
-          <label><input type="radio" name="count" value="40"><span>40</span></label>
-          <label><input type="radio" name="count" value="all"><span>Todas</span></label>
-        </div>
-        <p class="desc">Cada carta es una pregunta, sin repetirse.</p>
-      </fieldset>
+      <p class="lives-intro"><b class="challenge">¿Cuántas cartas eres capaz de dominar?</b>Tienes 3 torres 🏰🏰🏰. Cada fallo derriba una; cada racha de 10 aciertos te da una corona 👑 y reconstruye una torre.</p>
       <fieldset>
         <legend>Dificultad</legend>
         <div class="seg">
@@ -248,7 +244,7 @@ footer{max-width:30rem;margin:0 auto;padding:0 1rem 1.5rem;font-size:.8rem;color
       <fieldset>
         <legend>Etapa</legend>
         <div class="seg stages">
-          <label><input type="radio" name="diff" value="facil" checked><span><b>1</b> Entrenamiento</span></label>
+          <label><input type="radio" name="diff" value="facil" checked><span><b>1</b> Primeros pasos</span></label>
           <label><input type="radio" name="diff" value="intermedio"><span><b>2</b> Con reloj</span></label>
           <label><input type="radio" name="diff" value="medio"><span><b>3</b> Partida real</span></label>
         </div>
@@ -257,8 +253,8 @@ footer{max-width:30rem;margin:0 auto;padding:0 1rem 1.5rem;font-size:.8rem;color
       <fieldset>
         <legend>Desafío</legend>
         <div class="seg">
-          <label><input type="radio" name="rtime" value="20" checked><span>Con ayuda</span></label>
-          <label><input type="radio" name="rtime" value="10"><span>Insano 💀</span></label>
+          <label><input type="radio" name="rtime" value="20" checked><span>⚔️ Arena de entrenamiento</span></label>
+          <label><input type="radio" name="rtime" value="10"><span>Campeón definitivo 💀</span></label>
         </div>
         <p class="desc" id="d-rtime"></p>
       </fieldset>
@@ -293,7 +289,7 @@ footer{max-width:30rem;margin:0 auto;padding:0 1rem 1.5rem;font-size:.8rem;color
 
   <!-- RESULTS -->
   <section id="results" class="hidden">
-    <h1>Tu nota</h1>
+    <h1>Tu marca</h1>
     <div class="score display" id="score"></div>
     <div class="grade-sub" id="gradeSub"></div>
     <div class="stats">
@@ -320,7 +316,7 @@ footer{max-width:30rem;margin:0 auto;padding:0 1rem 1.5rem;font-size:.8rem;color
       </table></div>
       <h2>Intentos anteriores</h2>
       <div class="tblwrap"><table class="tbl">
-        <thead><tr><th>Fecha</th><th class="num">Nota</th><th class="num">Precisión</th><th class="num">Desvío</th><th class="num">Tiempo</th></tr></thead>
+        <thead><tr><th>Fecha</th><th class="num">Cartas</th><th class="num">Precisión</th><th class="num">Desvío</th><th class="num">Tiempo</th></tr></thead>
         <tbody id="attemptBody"></tbody>
       </table></div>
       <button class="link" id="reset">Borrar historial</button>
@@ -382,7 +378,10 @@ let CARDS = []; // se carga desde cards.json: [nombre, coste, rareza, icono]
 const $ = id => document.getElementById(id);
 const KEY = "elixirQuizV2";
 let deck=[], idx=0, hits=0, streak=0, misses=[], answers=[];
-let timeLimit=5, timer=null, t0=0, locked=false, nextT=null;
+let timeLimit=5, timer=null, t0=0, locked=false, nextT=null, lives=3;
+const MAX_LIVES=3;
+let crowns=0;
+const heartsTxt=()=>"🏰".repeat(lives)+"💥".repeat(MAX_LIVES-lives)+(crowns?`  👑${crowns}`:"");
 
 function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
 function load(){try{return JSON.parse(localStorage.getItem(KEY))||{attempts:[],cards:{}};}catch(e){return {attempts:[],cards:{}};}}
@@ -405,8 +404,8 @@ function refreshSetup(){
   $("countOpts").classList.toggle("hidden",!isCount);
   const h=load();
   const last=h.attempts[h.attempts.length-1];
-  const best=h.attempts.reduce((m,a)=>!m||a.nota>m.nota?a:m,null);
-  $("best").textContent = last ? `Última nota: ${fmt(last.nota)}/20 · Mejor: ${fmt(best.nota)}/20` : "";
+  const bestH=h.attempts.length?Math.max(...h.attempts.map(attHits)):0;
+  $("best").textContent = last ? `Última partida: ${attHits(last)} cartas · Récord: ${bestH} cartas` : "";
   $("practiceHard").classList.toggle("hidden", isCount || hardCards(h).length===0);
   if(isCount){
     const ch=loadC(); const l=ch.attempts[ch.attempts.length-1];
@@ -431,17 +430,15 @@ document.addEventListener("keydown",e=>{
 
 function start(list){
   timeLimit = +document.querySelector('input[name="time"]:checked').value;
-  deck=list; idx=0; hits=0; streak=0; misses=[]; answers=[];
+  deck=list; idx=0; hits=0; streak=0; misses=[]; answers=[]; lives=MAX_LIVES; crowns=0;
   show("game"); next();
 }
 function startFromSettings(){
-  const c=document.querySelector('input[name="count"]:checked').value;
-  const all=shuffle(CARDS);
-  start(c==="all"?all:all.slice(0,+c));
+  start(shuffle(CARDS));
 }
 
 function next(){
-  if(idx>=deck.length) return finish();
+  if(idx>=deck.length || lives<=0) return finish();
   locked=false;
   const [name,,rarity]=deck[idx];
   $("name").textContent=name; $("rarity").textContent=rarity;
@@ -450,7 +447,7 @@ function next(){
   $("feedback").textContent=""; $("feedback").className="feedback";
   $("card").className="card";
   document.querySelectorAll(".drop").forEach(b=>{b.className="drop";b.disabled=false;});
-  $("progress").textContent=`${idx+1} / ${deck.length}`;
+  $("progress").textContent=heartsTxt();
   $("streak").textContent=`Racha ${streak}`;
   $("points").textContent=`${hits} acierto${hits===1?"":"s"}`;
   t0=performance.now();
@@ -479,11 +476,15 @@ function answer(v){
   if(ok){
     hits++; streak++;
     $("card").classList.add("ok"); $("feedback").classList.add("ok");
-    $("feedback").textContent=`Correcto, ${cost} de elixir`;
+    let bonus="";
+    if(streak%10===0){ crowns++; if(lives<MAX_LIVES){ lives++; bonus=" · ¡+1 👑 y torre reconstruida!"; } else bonus=" · ¡+1 👑!"; }
+    $("progress").textContent=heartsTxt();
+    $("feedback").textContent=`Correcto, ${cost} de elixir${bonus}`;
   }else{
     streak=0; misses.push({card:deck[idx],you:v});
     $("card").classList.add("bad"); $("feedback").classList.add("bad");
-    $("feedback").textContent = v===null ? `Se acabó el tiempo: cuesta ${cost}` : `Cuesta ${cost}, no ${v}`;
+    lives--; $("progress").textContent=heartsTxt();
+    $("feedback").textContent = (v===null ? `Se acabó el tiempo: cuesta ${cost}` : `Cuesta ${cost}, no ${v}`) + (lives<=0?" · Cayó tu torre del rey":"");
   }
   idx++;
   nextT=setTimeout(next, ok?650:1300);
@@ -499,8 +500,9 @@ function finish(){
   const dev=answers.reduce((s,a)=>s+a.dev,0);
   const avgT=answers.reduce((s,a)=>s+a.t,0)/n;
 
-  $("score").textContent=`${fmt(nota)} / 20`;
-  $("gradeSub").textContent=`${hits} de ${n} aciertos con ${timeLimit} s por carta`;
+  const done = lives>0;  // terminó el mazo con vidas: maestría completa
+  $("score").textContent=`${hits} ${hits===1?"carta":"cartas"}`;
+  $("gradeSub").textContent= done ? `¡Maestría completa! Acertaste las ${deck.length} cartas · nota ${fmt(nota)}/20` : `Llegaste a ${hits} de ${deck.length}${crowns?` · ${crowns} 👑`:""} · nota ${fmt(nota)}/20`;
   $("acc").textContent=`${Math.round(acc*100)}%`;
   $("dev").textContent=dev;
   $("avg").textContent=`${fmt(avgT)} s`;
@@ -522,12 +524,12 @@ function finish(){
     if(!a.ok) c.errors++;
     if(a.v!==null){c.timeSum+=a.t;c.timeN++;}
   });
-  recordBanner($("recBanner"), h.attempts.filter(a=>a.t===timeLimit).map(a=>a.nota), nota);
-  h.attempts.push({date:new Date().toISOString(),n,t:timeLimit,nota,acc,dev,avgT});
+  recordBanner($("recBanner"), h.attempts.filter(a=>a.t===timeLimit).map(attHits), hits);
+  h.attempts.push({date:new Date().toISOString(),n,t:timeLimit,nota,acc,dev,avgT,hits});
   h.attempts=h.attempts.slice(-100);
   save(h);
   renderHistory(h);
-  progressChart($("costChart"), h.attempts, a=>a.t, COST_GROUPS, timeLimit);
+  progressChart($("costChart"), h.attempts.map(a=>({...a,nota:attHits(a)})), a=>a.t, COST_GROUPS, timeLimit, Math.max(20,...h.attempts.map(attHits)));
 }
 
 function renderHistory(h){
@@ -539,7 +541,7 @@ function renderHistory(h){
   $("attemptBody").innerHTML = at.map(a=>{
     const d=new Date(a.date);
     const day=d.toLocaleDateString("es-PE",{day:"2-digit",month:"2-digit"})+" "+d.toLocaleTimeString("es-PE",{hour:"2-digit",minute:"2-digit"});
-    return `<tr><td>${day}</td><td class="num">${fmt(a.nota)}</td><td class="num">${Math.round(a.acc*100)}%</td><td class="num">${a.dev}</td><td class="num">${fmt(a.avgT)} s</td></tr>`;
+    return `<tr><td>${day}</td><td class="num">${attHits(a)}</td><td class="num">${Math.round(a.acc*100)}%</td><td class="num">${a.dev}</td><td class="num">${fmt(a.avgT)} s</td></tr>`;
   }).join("");
 }
 
@@ -555,9 +557,9 @@ const DESC={
   diff:{facil:`El rival suelta 3 o 4 cartas seguidas, sin reloj. Si aciertas, la siguiente ronda trae una carta más.`,
         intermedio:`Ahora el reloj también cuenta: <b>⏱ 3 segundos = +1 gota de elixir ${IX}</b>. Si aciertas, también suben las cartas.`,
         medio:`Como en el juego: <b>⏱ 2,8 segundos = +1 gota ${IX}</b>, y las 3 últimas rondas son en doble elixir. Solo verás la última carta que jugó.`},
-  rtime:{20:`Cada carta muestra su coste en gotas de elixir ${IX} y tienes 20 segundos para responder.`,10:"Sin ayudas y solo 10 segundos. La prueba de fuego: ¿qué tan pro eres?"}
+  rtime:{20:`Donde todos empiezan: cada carta muestra su coste en elixir ${IX} y tienes 20 segundos.`,10:"La cima de la Senda de Leyendas: sin ayudas y solo 10 segundos. ¿Estás a la altura?"}
 };
-const LEVEL_NAME={"Fácil":"Entrenamiento","Intermedio":"Con reloj","Medio":"Partida real","Difícil":"Doble elixir"};
+const LEVEL_NAME={"Fácil":"Primeros pasos","Intermedio":"Con reloj","Medio":"Partida real","Difícil":"Doble elixir"};
 function updateDescs(){
   Object.keys(DESC).forEach(k=>{
     const el=$("d-"+k), r=document.querySelector(`input[name="${k}"]:checked`);
@@ -589,24 +591,26 @@ $("reset").addEventListener("click",()=>{
 
 // ================= GRÁFICO DE PROGRESO =================
 // attempts: lista con .nota; key(a) agrupa (nivel o tiempo); order/colors por grupo
-function progressChart(el, attempts, key, groups, current){
+const attHits=a=>a.hits!==undefined?a.hits:Math.round(a.acc*a.n);
+const fmtV=v=>Number.isInteger(v)?String(v):fmt(v);
+function progressChart(el, attempts, key, groups, current, maxV=20){
   const W=320,H=170,L=26,R=10,T=12,B=22, iw=W-L-R, ih=H-T-B;
   const byG={}; attempts.forEach(a=>{(byG[key(a)]=byG[key(a)]||[]).push(a);});
   const maxN=Math.max(2,...Object.values(byG).map(v=>Math.min(15,v.length)));
-  const x=i=>L+(maxN===1?iw/2:i*iw/(maxN-1)), y=v=>T+ih*(1-v/20);
+  const x=i=>L+(maxN===1?iw/2:i*iw/(maxN-1)), y=v=>T+ih*(1-v/maxV);
   let g='';
-  [0,5,10,15,20].forEach(v=>{g+=`<line class="grid" x1="${L}" x2="${W-R}" y1="${y(v)}" y2="${y(v)}" ${v%10?'opacity=".45"':''}/><text class="axis" x="${L-6}" y="${y(v)+3}" text-anchor="end">${v}</text>`;});
+  [0,.25,.5,.75,1].map(f=>Math.round(f*maxV)).forEach((v,i)=>{g+=`<line class="grid" x1="${L}" x2="${W-R}" y1="${y(v)}" y2="${y(v)}" ${i%2?'opacity=".45"':''}/><text class="axis" x="${L-6}" y="${y(v)+3}" text-anchor="end">${v}</text>`;});
   g+=`<text class="axis" x="${W-R}" y="${H-6}" text-anchor="end">intentos →</text>`;
   const legend=[];
   groups.forEach(gr=>{
     const pts=(byG[gr.id]||[]).slice(-15); if(!pts.length) return;
     const col=gr.color, isCur=gr.id===current;
     const best=Math.max(...pts.map(p=>p.nota));
-    if(isCur) g+=`<line class="recline" stroke="${col}" x1="${L}" x2="${W-R}" y1="${y(best)}" y2="${y(best)}"/><text class="axis" x="${W-R}" y="${y(best)-4}" text-anchor="end" style="fill:${col}">récord ${fmt(best)}</text>`;
+    if(isCur) g+=`<line class="recline" stroke="${col}" x1="${L}" x2="${W-R}" y1="${y(best)}" y2="${y(best)}"/><text class="axis" x="${W-R}" y="${y(best)-4}" text-anchor="end" style="fill:${col}">récord ${fmtV(best)}</text>`;
     const d=pts.map((p,i)=>`${i?'L':'M'}${x(i).toFixed(1)},${y(p.nota).toFixed(1)}`).join(' ');
     g+=`<path d="${d}" fill="none" stroke="${col}" stroke-width="${isCur?3:2}" stroke-linejoin="round" stroke-linecap="round" opacity="${isCur?1:.45}"/>`;
     pts.forEach((p,i)=>{const last=i===pts.length-1&&isCur;
-      g+=`<circle cx="${x(i).toFixed(1)}" cy="${y(p.nota).toFixed(1)}" r="${last?5:3}" fill="${col}" opacity="${isCur?1:.45}"${last?' stroke="var(--surface)" stroke-width="2"':''}><title>${fmt(p.nota)}/20</title></circle>`;});
+      g+=`<circle cx="${x(i).toFixed(1)}" cy="${y(p.nota).toFixed(1)}" r="${last?5:3}" fill="${col}" opacity="${isCur?1:.45}"${last?' stroke="var(--surface)" stroke-width="2"':''}><title>${fmtV(p.nota)}</title></circle>`;});
     legend.push(`<span><i style="background:${col}"></i>${gr.label}</span>`);
   });
   el.innerHTML=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Evolución de tus notas">${g}</svg><div class="legend">${legend.join('')}</div>`;
@@ -614,11 +618,11 @@ function progressChart(el, attempts, key, groups, current){
 function recordBanner(el, prevNotas, nota){
   el.className="banner";
   if(!prevNotas.length){el.classList.add("first");el.textContent="Primera partida en este nivel: ya tienes tu marca a batir";}
-  else if(nota>Math.max(...prevNotas)){el.classList.add("rec");el.textContent=`¡Nuevo récord! Superas tu ${fmt(Math.max(...prevNotas))}`;}
+  else if(nota>Math.max(...prevNotas)){el.classList.add("rec");el.textContent=`¡Nuevo récord! Superas tu ${fmtV(Math.max(...prevNotas))}`;}
   else el.classList.add("hidden");
 }
 const COST_GROUPS=[{id:8,label:"Fácil",color:"var(--ok)"},{id:5,label:"Normal",color:"var(--elixir)"},{id:3,label:"Difícil",color:"var(--gold)"}];
-const COUNT_GROUPS=[{id:"Fácil",label:"Entrenamiento",color:"var(--ok)"},{id:"Intermedio",label:"Con reloj",color:"#3FA9F5"},{id:"Medio",label:"Partida real",color:"var(--elixir)"},{id:"Difícil",label:"Doble elixir",color:"var(--gold)"}];
+const COUNT_GROUPS=[{id:"Fácil",label:"Primeros pasos",color:"var(--ok)"},{id:"Intermedio",label:"Con reloj",color:"#3FA9F5"},{id:"Medio",label:"Partida real",color:"var(--elixir)"},{id:"Difícil",label:"Doble elixir",color:"var(--gold)"}];
 
 // ================= MODO CONTEO =================
 const CKEY="elixirCountV1";
@@ -735,7 +739,7 @@ function cPlay(){
   $("cStreak").textContent=`Racha ${cStreak}`;
   const ex=cRes.filter(r=>r.ok).length;
   $("cPoints").textContent=`${ex} exacta${ex===1?"":"s"}`;
-  $("cPhase").innerHTML=cCur.easyTime?`⏱ 3 s = +1 ${IX}`:(cCur.double?`Doble elixir · ⏱ 1,4 s = +1 ${IX}`:(cCur.time?`⏱ 2,8 s = +1 ${IX}`:"Entrenamiento · el reloj no cuenta"));
+  $("cPhase").innerHTML=cCur.easyTime?`⏱ 3 s = +1 ${IX}`:(cCur.double?`Doble elixir · ⏱ 1,4 s = +1 ${IX}`:(cCur.time?`⏱ 2,8 s = +1 ${IX}`:"Primeros pasos · el reloj no cuenta"));
   $("cCard").className="card";
   const feed=$("feed"); feed.innerHTML=""; feed.classList.toggle("solo",cCur.solo);
   feed.classList.toggle("noname",!$("showNames").checked);
