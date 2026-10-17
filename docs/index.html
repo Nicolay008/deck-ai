@@ -398,7 +398,7 @@ footer .link{display:block;margin:0 auto .5rem;font-size:.9rem}
 
   <!-- COUNT RESULTS -->
   <section id="countResults" class="hidden">
-    <h1 data-en="Your score">Tu nota</h1>
+    <h1 data-en="Your score">Tu marca</h1>
     <div class="score display" id="cScore"></div>
     <div class="grade-sub" id="cSub"></div>
     <div class="stats">
@@ -413,7 +413,7 @@ footer .link{display:block;margin:0 auto .5rem;font-size:.9rem}
     <div class="hist">
       <h2 data-en="Previous attempts">Intentos anteriores</h2>
       <div class="tblwrap"><table class="tbl">
-        <thead><tr data-en="&lt;th&gt;Date&lt;/th&gt;&lt;th&gt;Stage&lt;/th&gt;&lt;th class=&quot;num&quot;&gt;Score&lt;/th&gt;&lt;th class=&quot;num&quot;&gt;Exact&lt;/th&gt;&lt;th class=&quot;num&quot;&gt;Off&lt;/th&gt;"><th>Fecha</th><th>Nivel</th><th class="num">Nota</th><th class="num">Exactas</th><th class="num">Desvío</th></tr></thead>
+        <thead><tr data-en="&lt;th&gt;Date&lt;/th&gt;&lt;th&gt;Stage&lt;/th&gt;&lt;th class=&quot;num&quot;&gt;🏆&lt;/th&gt;&lt;th class=&quot;num&quot;&gt;Exact&lt;/th&gt;&lt;th class=&quot;num&quot;&gt;Off&lt;/th&gt;"><th>Fecha</th><th>Etapa</th><th class="num">🏆</th><th class="num">Exactas</th><th class="num">Desvío</th></tr></thead>
         <tbody id="cAttemptBody"></tbody>
       </table></div>
     </div>
@@ -445,6 +445,7 @@ const LANG_KEY="elixirLang";
 const LANG=(()=>{try{const v=localStorage.getItem(LANG_KEY); if(v==="es"||v==="en") return v;}catch(e){}
   return (navigator.language||"es").toLowerCase().startsWith("es")?"es":"en";})();
 const L=(es,en)=>LANG==="en"?en:es;
+const troph=n=>Math.round(n*50);   // nota 0-20 → trofeos 0-1000
 const tr=L; // alias para funciones donde "L" es otra variable
 document.documentElement.lang=LANG;
 if(LANG==="en") document.querySelectorAll("[data-en]").forEach(el=>{el.innerHTML=el.dataset.en;});
@@ -541,7 +542,7 @@ function refreshSetup(){
   if(isCount){
     const ch=loadC(); const l=ch.attempts[ch.attempts.length-1];
     const b=ch.attempts.reduce((m,a)=>!m||a.nota>m.nota?a:m,null);
-    $("best").textContent = l ? L(`Conteo · última nota: ${fmt(l.nota)}/20 · mejor: ${fmt(b.nota)}/20`,`Tracking · last score: ${fmt(l.nota)}/20 · best: ${fmt(b.nota)}/20`) : "";
+    $("best").textContent = l ? L(`Última partida: ${troph(l.nota)} 🏆 · Récord: ${troph(b.nota)} 🏆`,`Last run: ${troph(l.nota)} 🏆 · Best: ${troph(b.nota)} 🏆`) : "";
   }
 }
 
@@ -641,7 +642,7 @@ function finish(){
   const before=badgeStates();
   $("score").textContent=`${hits} ${hits===1?L("carta","card"):L("cartas","cards")}`;
   setPipette("pipetteRes",hits,deck.length);
-  $("gradeSub").textContent= done ? L(`¡Maestría ${DIF_NAME(timeLimit)} completa! · ${fmt(avgT)} s por carta · nota ${fmt(nota)}/20`,`${DIF_NAME(timeLimit)} Mastery complete! · ${fmt(avgT)} s per card · score ${fmt(nota)}/20`) : (lives>0 && !runFull) ? L(`Práctica completada: ${hits} de ${deck.length}`,`Practice complete: ${hits} of ${deck.length}`) : L(`Llegaste a ${hits} de ${deck.length}${crowns?` · ${crowns} 👑`:""} · nota ${fmt(nota)}/20`,`You reached ${hits} of ${deck.length}${crowns?` · ${crowns} 👑`:""} · score ${fmt(nota)}/20`);
+  $("gradeSub").textContent= done ? L(`¡Maestría ${DIF_NAME(timeLimit)} completa! · ${fmt(avgT)} s por carta · ${troph(nota)} 🏆`,`${DIF_NAME(timeLimit)} Mastery complete! · ${fmt(avgT)} s per card · ${troph(nota)} 🏆`) : (lives>0 && !runFull) ? L(`Práctica completada: ${hits} de ${deck.length}`,`Practice complete: ${hits} of ${deck.length}`) : L(`Llegaste a ${hits} de ${deck.length}${crowns?` · ${crowns} 👑`:""} · ${troph(nota)} 🏆`,`You reached ${hits} of ${deck.length}${crowns?` · ${crowns} 👑`:""} · ${troph(nota)} 🏆`);
   $("acc").textContent=`${Math.round(acc*100)}%`;
   $("dev").textContent=dev;
   $("avg").textContent=`${fmt(avgT)} s`;
@@ -1080,23 +1081,23 @@ function cFinish(){
   // exacta: 70% + hasta 30% por rapidez; a 1 de distancia: 30%
   const pts=cRes.reduce((s,r)=>s+(r.ok?0.7+0.3*(1-r.t/ANSWER_TIME):(r.near?0.3:0)),0);
   const nota=20*pts/n, dev=cRes.reduce((s,r)=>s+r.dev,0), avgT=cRes.reduce((s,r)=>s+r.t,0)/n;
-  $("cScore").textContent=`${fmt(nota)} / 20`;
+  $("cScore").textContent=`${troph(nota)} 🏆`;
   $("cSub").textContent=`${LEVEL_NAME[cLevel.label]}${ANSWER_TIME<=10?" 💀":""} · ${n} ${L("rondas","rounds")}`;
   $("cAcc").textContent=`${ex} ${L("de","of")} ${n}`;
   $("cDev").textContent=dev;
   $("cAvg").textContent=`${fmt(avgT)} s`;
   const h=loadC();
-  recordBanner($("cRecBanner"), h.attempts.filter(a=>a.level===cLevel.label).map(a=>a.nota), nota);
+  recordBanner($("cRecBanner"), h.attempts.filter(a=>a.level===cLevel.label).map(a=>troph(a.nota)), troph(nota));
   const cBefore=badgeStates(CBADGES);
   h.attempts.push({date:new Date().toISOString(),level:cLevel.label,n,nota,ex,dev,rt:ANSWER_TIME});
   h.attempts=h.attempts.slice(-100); saveC(h);
   const cNew=CBADGES.filter((b,i)=>b.on()&&!cBefore[i]);
   if(cNew.length){ setTimeout(sfx.fanfare,200); const el=$("cRecBanner"); el.className="banner rec"; el.textContent=`${L("¡Nueva insignia!","New badge!")} ${cNew.map(b=>b.i+" "+bTitle(b)).join(" · ")}`; }
-  progressChart($("countChart"), h.attempts, a=>a.level, COUNT_GROUPS, cLevel.label);
+  progressChart($("countChart"), h.attempts.map(a=>({...a,nota:troph(a.nota)})), a=>a.level, COUNT_GROUPS, cLevel.label, 1000);
   $("cAttemptBody").innerHTML=h.attempts.slice(-8).reverse().map(a=>{
     const d=new Date(a.date);
     const day=d.toLocaleDateString(LOCALE,{day:"2-digit",month:"2-digit"})+" "+d.toLocaleTimeString(LOCALE,{hour:"2-digit",minute:"2-digit"});
-    return `<tr><td>${day}</td><td>${LEVEL_NAME[a.level]||a.level}${a.rt===10||a.rt===undefined?" 💀":""}</td><td class="num">${fmt(a.nota)}</td><td class="num">${a.ex}/${a.n}</td><td class="num">${a.dev}</td></tr>`;
+    return `<tr><td>${day}</td><td>${LEVEL_NAME[a.level]||a.level}${a.rt===10||a.rt===undefined?" 💀":""}</td><td class="num">${troph(a.nota)}</td><td class="num">${a.ex}/${a.n}</td><td class="num">${a.dev}</td></tr>`;
   }).join("");
 }
 $("cAgain").addEventListener("click",startCount);
