@@ -340,6 +340,16 @@
   "icono_heroe": null
  },
  {
+  "id": 26000064,
+  "nombre": "Lanzafuegos",
+  "nombre_en": "Firecracker",
+  "coste": 3,
+  "rareza": "Común",
+  "icono": "https://api-assets.clashroyale.com/cards/300/c1rL3LO1U2D9-TkeFfAC18gP3AO8ztSwrcHMZplwL2Q.png",
+  "icono_evo": "https://api-assets.clashroyale.com/cardevolutions/300/c1rL3LO1U2D9-TkeFfAC18gP3AO8ztSwrcHMZplwL2Q.png",
+  "icono_heroe": null
+ },
+ {
   "id": 27000009,
   "nombre": "Lápida",
   "nombre_en": "Tombstone",
@@ -407,16 +417,6 @@
   "rareza": "Legendaria",
   "icono": "https://api-assets.clashroyale.com/cards/300/U2KZ3g0wyufcuA5P2Xrn3Z3lr1WiJmc5S0IWOZHgizQ.png",
   "icono_evo": null,
-  "icono_heroe": null
- },
- {
-  "id": 26000064,
-  "nombre": "Petardera",
-  "nombre_en": "Firecracker",
-  "coste": 3,
-  "rareza": "Común",
-  "icono": "https://api-assets.clashroyale.com/cards/300/c1rL3LO1U2D9-TkeFfAC18gP3AO8ztSwrcHMZplwL2Q.png",
-  "icono_evo": "https://api-assets.clashroyale.com/cardevolutions/300/c1rL3LO1U2D9-TkeFfAC18gP3AO8ztSwrcHMZplwL2Q.png",
   "icono_heroe": null
  },
  {
@@ -641,7 +641,7 @@
  },
  {
   "id": 27000012,
-  "nombre": "Jaula de Duende",
+  "nombre": "Jaula del Forzudo",
   "nombre_en": "Goblin Cage",
   "coste": 4,
   "rareza": "Especial",
