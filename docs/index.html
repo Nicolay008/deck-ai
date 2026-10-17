@@ -634,6 +634,13 @@ let cLevel=null,cRounds=0,cIdx=0,cRes=[],cStreak=0,cScn=null,cTimer=null,cT0=0,c
 function loadC(){try{return JSON.parse(localStorage.getItem(CKEY))||{attempts:[]};}catch(e){return {attempts:[]};}}
 function saveC(h){try{localStorage.setItem(CKEY,JSON.stringify(h));}catch(e){}}
 const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+// n cartas al azar sin repetir la misma carta en dos formas (normal, Evo, Héroe)
+const baseName=n=>n.replace(/ \((Evo|Héroe)\)$/,"");
+function pickUnique(n){
+  const seen=new Set(), out=[];
+  for(const c of shuffle(CARDS)){ const b=baseName(c[0]); if(seen.has(b)) continue; seen.add(b); out.push(c); if(out.length===n) break; }
+  return out;
+}
 const f1=x=>(Math.round(x*10)/10).toString().replace(".",",");
 
 for(let i=0;i<10;i++) $("cBar").appendChild(document.createElement("i"));
@@ -646,8 +653,22 @@ for(let n=0;n<=10;n++){
 
 function genScenario(L){
   const rate=L.easyTime?1/3:(L.double?1/1.4:1/2.8);
+  // Entrenamiento (sin reloj): primero las cartas, luego un sobrante al azar,
+  // para que cualquier respuesta sea igual de probable
+  if(!L.time){
+    let rem=rnd(0,L.plays>=4?4:6);               // la respuesta se elige primero y se mantiene
+    for(let tries=0;tries<2000;tries++){
+      if(tries>0 && tries%500===0 && rem>0) rem--;
+      const picks=pickUnique(L.plays);
+      const sum=picks.reduce((t,c)=>t+c[1],0);
+      if(sum>10-rem) continue;
+      const start=sum+rem; let e=start;
+      const steps=picks.map(card=>{e-=card[1];return {type:"play",card,after:e};});
+      return {start,steps,answer:rem,exact:rem};
+    }
+  }
   for(let tries=0;tries<500;tries++){
-    const deck8=shuffle(CARDS).slice(0,8);
+    const deck8=pickUnique(8);
     // inicio de partida: 5 de elixir y el rival espera antes de jugar (solo con elixir normal)
     const opening = L.time && !L.double && Math.random()<.4;
     let e=opening?5:rnd(L.startMin,10); const start=e; const steps=[]; let ok=true; const recent=[];
@@ -670,6 +691,8 @@ function genScenario(L){
       e=Math.min(10,e+gain); steps.push({type:"time",secs,gain,after:e,leak:before+gain-e});
     }
     const answer=Math.floor(e+1e-9);
+    // que el 0 no sea la respuesta casi siempre: solo se acepta en 1 de cada 6 casos
+    if(answer===0 && Math.random()<.83) continue;
     if(e-answer>0.75 || e-answer>1e-9 && e-answer<0.15 && false) continue;
     return {start,steps,answer,exact:e,opening};
   }
@@ -816,7 +839,13 @@ $("cBack").addEventListener("click",()=>{refreshSetup();show("setup");});
 $("start").disabled=true; $("start").textContent="Cargando cartas…";
 fetch("cards.json").then(r=>{if(!r.ok) throw new Error(r.status); return r.json();})
   .then(data=>{
-    CARDS=data.filter(c=>Number.isInteger(c.coste)).map(c=>[c.nombre,c.coste,c.rareza,c.icono]);
+    // cada evolución y cada héroe es una entrada más, con su imagen; el coste es el de la carta normal
+    CARDS=[];
+    data.filter(c=>Number.isInteger(c.coste)).forEach(c=>{
+      CARDS.push([c.nombre,c.coste,c.rareza,c.icono]);
+      if(c.icono_evo)   CARDS.push([`${c.nombre} (Evo)`,c.coste,c.rareza,c.icono_evo]);
+      if(c.icono_heroe) CARDS.push([`${c.nombre} (Héroe)`,c.coste,c.rareza,c.icono_heroe]);
+    });
     CARDS.forEach(c=>{const i=new Image(); i.src=c[3]||"";}); // precarga
     $("start").disabled=false; $("start").textContent="Empezar";
     refreshSetup();
