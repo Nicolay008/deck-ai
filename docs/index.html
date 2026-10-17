@@ -176,8 +176,18 @@ footer{max-width:30rem;margin:0 auto;padding:0 1rem 1.5rem;font-size:.8rem;color
   clip-path:polygon(50% 0,100% 62%,92% 85%,70% 100%,30% 100%,8% 85%,0 62%);padding-top:.35rem}
 .mtitle{font-family:"Lilita One","Arial Rounded MT Bold",sans-serif;font-size:1.1rem;line-height:1.15}
 .mdesc{font-size:.85rem;color:var(--muted);line-height:1.3;margin-top:.15rem}
+.qdrop.sm{width:26px;height:31px;font-size:1rem;margin-left:.45rem;padding-top:.3rem;flex:none}
 .desc{margin:.45rem 0 0;font-size:.92rem;min-height:1.4em}
-@media (prefers-reduced-motion: reduce){*{transition:none!important}}
+
+.edrops{display:inline-flex;gap:4px;margin-left:.6rem;vertical-align:middle}
+.edrop{display:inline-block;width:15px;height:18px;opacity:0;
+  background:radial-gradient(circle at 35% 30%,var(--elixir-2),var(--elixir) 70%);
+  clip-path:polygon(50% 0,100% 62%,92% 85%,70% 100%,30% 100%,8% 85%,0 62%);
+  animation:dropin .35s ease-out forwards}
+.edrop.lost{background:var(--muted);opacity:0}
+.feed.solo .edrop{width:20px;height:24px}
+@keyframes dropin{from{opacity:0;transform:translateY(-8px) scale(.5)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){*{transition:none!important}.edrop{animation:none;opacity:1}}
 </style>
 </head>
 <body>
@@ -238,6 +248,14 @@ footer{max-width:30rem;margin:0 auto;padding:0 1rem 1.5rem;font-size:.8rem;color
           <label><input type="radio" name="diff" value="dificil"><span>Doble</span></label>
         </div>
         <p class="desc" id="d-diff"></p>
+      </fieldset>
+      <fieldset>
+        <legend>Modo</legend>
+        <div class="seg">
+          <label><input type="radio" name="rtime" value="20" checked><span>Entrenamiento</span></label>
+          <label><input type="radio" name="rtime" value="10"><span>Insano 💀</span></label>
+        </div>
+        <p class="desc" id="d-rtime"></p>
       </fieldset>
       <fieldset>
         <legend>Cartas</legend>
@@ -548,7 +566,8 @@ const DESC={
         intermedio:"4 jugadas y el tiempo suma: cada 3 s es +1 exacto. Ves la lista entera.",
         medio:"Como en partida: +1 cada 2,8 s y solo ves la última jugada.",
         dificil:"Doble elixir: +1 cada 1,4 s, 6 jugadas y solo ves la última."},
-  names:{show:"Nombre junto a cada carta.",hide:"Solo la imagen, como en el juego."}
+  names:{show:"Nombre junto a cada carta.",hide:"Solo la imagen, como en el juego."},
+  rtime:{20:"Ves el coste de cada carta y tienes 20 s. Para practicar la suma y la resta.",10:"La prueba de fuego: sin costes y solo 10 s. ¿Qué tan pro eres?"}
 };
 const LEVEL_NAME={"Fácil":"Sin tiempo","Intermedio":"Regla de 3 s","Medio":"Partida real","Difícil":"Doble elixir"};
 function updateDescs(){
@@ -621,7 +640,7 @@ const LEVELS={
   medio:{label:"Medio",plays:4,time:true,double:false,solo:true,step:1900,startMin:3},
   dificil:{label:"Difícil",plays:6,time:true,double:true,solo:true,step:1700,startMin:3}
 };
-const ANSWER_TIME=10;
+let ANSWER_TIME=20;
 const RCLASS={"Común":"r-com","Especial":"r-esp","Épica":"r-epi","Legendaria":"r-leg","Campeón":"r-cam"};
 let cLevel=null,cRounds=0,cIdx=0,cRes=[],cStreak=0,cScn=null,cTimer=null,cT0=0,cLocked=false,cReveal=null;
 function loadC(){try{return JSON.parse(localStorage.getItem(CKEY))||{attempts:[]};}catch(e){return {attempts:[]};}}
@@ -645,7 +664,7 @@ function genScenario(L){
     const opening = L.time && !L.double && Math.random()<.4;
     let e=opening?5:rnd(L.startMin,10); const start=e; const steps=[]; let ok=true; const recent=[];
     for(let i=0;i<L.plays;i++){
-      if(L.time && (i>0 || opening || Math.random()<.4)){
+      if(L.time && ((i>0 && Math.random()>.25) || (i===0 && (opening || Math.random()<.4)))){
         const secs=(i===0&&opening)?(L.easyTime?15:rnd(8,17)):(L.easyTime?[3,6,9][rnd(0,2)]:rnd(2,8)), gain=secs*rate, before=e;
         e=Math.min(10,e+gain);
         steps.push({type:"time",secs,gain,after:e,leak:before+gain-e,opening:i===0&&opening});
@@ -668,8 +687,20 @@ function genScenario(L){
   }
 }
 
+
+// gotas visibles en el nivel "Regla 3 s": cada 3 s aparece una gota; las que se pierden a 10, en gris
+function timeHtml(st){
+  const base = st.opening?`⏱ inicio: espera ${st.secs} s sin jugar`:`⏱ pasan ${st.secs} s`;
+  if(!cLevel.easyTime) return base;
+  const got=Math.round(st.gain-st.leak), lost=Math.round(st.leak);
+  let d='';
+  for(let i=0;i<got+lost;i++) d+=`<i class="edrop${i>=got?' lost':''}" style="animation-delay:${(i*0.3).toFixed(1)}s"></i>`;
+  return `${base}<span class="edrops" aria-label="+${got} de elixir">${d}</span>`;
+}
+
 function startCount(){
   cLevel=LEVELS[document.querySelector('input[name="diff"]:checked').value];
+  ANSWER_TIME=+document.querySelector('input[name="rtime"]:checked').value;
   cRounds=+document.querySelector('input[name="rounds"]:checked').value;
   cIdx=0;cRes=[];cStreak=0;
   show("count"); cNextRound();
@@ -696,8 +727,8 @@ function cPlay(){
   $("cFeedback").textContent=""; $("cFeedback").className="feedback";
   const lines=[{cls:"start",html:cScn.opening?`Empieza la partida: el rival tiene <b>5</b> de elixir`:`El rival tiene <b>${cScn.start}</b> de elixir`}]
     .concat(cScn.steps.map(st=>st.type==="time"
-      ?{cls:"time",html:st.opening?`⏱ inicio: espera ${st.secs} s sin jugar`:`⏱ pasan ${st.secs} s`}
-      :{cls:"play",html:`${st.card[3]?`<img class="mini" src="${st.card[3]}" alt="">`:`<i class="chip ${RCLASS[st.card[2]]}"></i>`}<b>${st.card[0]}</b>`}));
+      ?{cls:"time",html:timeHtml(st)}
+      :{cls:"play",html:`${st.card[3]?`<img class="mini" src="${st.card[3]}" alt="">`:`<i class="chip ${RCLASS[st.card[2]]}"></i>`}<b>${st.card[0]}</b>${ANSWER_TIME>10?`<span class="qdrop sm" aria-label="cuesta ${st.card[1]}">${st.card[1]}</span>`:""}`}));
   let k=0;
   const push=()=>{
     const li=document.createElement("li"); li.className=lines[k].cls; li.innerHTML=lines[k].html;
@@ -770,19 +801,19 @@ function cFinish(){
   const pts=cRes.reduce((s,r)=>s+(r.ok?0.7+0.3*(1-r.t/ANSWER_TIME):(r.near?0.3:0)),0);
   const nota=20*pts/n, dev=cRes.reduce((s,r)=>s+r.dev,0), avgT=cRes.reduce((s,r)=>s+r.t,0)/n;
   $("cScore").textContent=`${fmt(nota)} / 20`;
-  $("cSub").textContent=`${LEVEL_NAME[cLevel.label]} · ${n} rondas`;
+  $("cSub").textContent=`${LEVEL_NAME[cLevel.label]}${ANSWER_TIME<=10?" 💀":""} · ${n} rondas`;
   $("cAcc").textContent=`${ex} de ${n}`;
   $("cDev").textContent=dev;
   $("cAvg").textContent=`${fmt(avgT)} s`;
   const h=loadC();
   recordBanner($("cRecBanner"), h.attempts.filter(a=>a.level===cLevel.label).map(a=>a.nota), nota);
-  h.attempts.push({date:new Date().toISOString(),level:cLevel.label,n,nota,ex,dev});
+  h.attempts.push({date:new Date().toISOString(),level:cLevel.label,n,nota,ex,dev,rt:ANSWER_TIME});
   h.attempts=h.attempts.slice(-100); saveC(h);
   progressChart($("countChart"), h.attempts, a=>a.level, COUNT_GROUPS, cLevel.label);
   $("cAttemptBody").innerHTML=h.attempts.slice(-8).reverse().map(a=>{
     const d=new Date(a.date);
     const day=d.toLocaleDateString("es-PE",{day:"2-digit",month:"2-digit"})+" "+d.toLocaleTimeString("es-PE",{hour:"2-digit",minute:"2-digit"});
-    return `<tr><td>${day}</td><td>${LEVEL_NAME[a.level]||a.level}</td><td class="num">${fmt(a.nota)}</td><td class="num">${a.ex}/${a.n}</td><td class="num">${a.dev}</td></tr>`;
+    return `<tr><td>${day}</td><td>${LEVEL_NAME[a.level]||a.level}${a.rt===10||a.rt===undefined?" 💀":""}</td><td class="num">${fmt(a.nota)}</td><td class="num">${a.ex}/${a.n}</td><td class="num">${a.dev}</td></tr>`;
   }).join("");
 }
 $("cAgain").addEventListener("click",startCount);
