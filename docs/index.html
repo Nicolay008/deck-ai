@@ -452,15 +452,16 @@ function noise(dur,{freq=3000,to=null,q=1,delay=0,vol=.6,shape="decay"}={}){
   src.connect(f); f.connect(g); g.connect(master); src.start(t);
 }
 const sfx={
-  pop:   ()=>{ tone(620,.12,{to:1100,vol:.9}); },                                 // acierto: pop de elixir
-  err:   ()=>{ tone(210,.22,{type:"triangle",to:140,vol:.9}); },                   // fallo
-  tick:  ()=>{ tone(1500,.04,{type:"square",vol:.35}); },                          // últimos segundos
+  ok:    ()=>{ tone(523,.12,{vol:.5}); tone(784,.18,{vol:.5,delay:.09}); },        // acierto: campanita suave
+  drop:  ()=>{ tone(420,.11,{to:170,vol:.8}); },                                    // gota de elixir grave
+  err:   ()=>{ tone(190,.07,{type:"square",vol:.35}); tone(150,.1,{type:"square",vol:.35,delay:.1}); }, // error: dos pitidos graves
+  tick:  ()=>{ tone(700,.05,{vol:.25}); },                                          // últimos segundos, suave
   card:  ()=>{ noise(.2,{freq:700,to:3200,q:1.2,vol:.45,shape:"swell"}); },        // carta que se desliza
   swords:()=>{ noise(.09,{freq:4200,q:3}); noise(.12,{freq:5200,q:4,delay:.09}); tone(2400,.35,{type:"triangle",delay:.09,vol:.25}); }, // empezar
   fanfare:()=>{ [523,659,784,1047].forEach((f,i)=>tone(f,.18,{type:"triangle",delay:i*.09,vol:.7})); } // corona, récord, insignia
 };
 function renderSnd(){ document.querySelectorAll(".snd").forEach(b=>{ b.textContent=soundOn?"🔊":"🔇"; b.setAttribute("aria-label",soundOn?L("Silenciar","Mute"):L("Activar sonido","Unmute")); }); }
-document.querySelectorAll(".snd").forEach(b=>b.addEventListener("click",()=>{ soundOn=!soundOn; try{localStorage.setItem(SND_KEY,soundOn?"on":"off");}catch(e){} renderSnd(); if(soundOn) sfx.pop(); }));
+document.querySelectorAll(".snd").forEach(b=>b.addEventListener("click",()=>{ soundOn=!soundOn; try{localStorage.setItem(SND_KEY,soundOn?"on":"off");}catch(e){} renderSnd(); if(soundOn) sfx.ok(); }));
 renderSnd();
 // tic en los últimos 2 segundos (uno por segundo)
 let lastTickSec=null;
@@ -562,7 +563,6 @@ function tick(){
   const left=Math.max(0,1-(performance.now()-t0)/(timeLimit*1000));
   const on=Math.ceil(left*10);
   [...$("bar").children].forEach((s,i)=>s.classList.toggle("off",i>=on));
-  warnTick(left*timeLimit);
   if(left<=0) answer(null);
 }
 
@@ -580,7 +580,7 @@ function answer(v){
     else if(+b.dataset.v===v) b.classList.add("wrong");
   });
   if(ok){
-    hits++; streak++; sfx.pop();
+    hits++; streak++;
     $("card").classList.add("ok"); $("feedback").classList.add("ok");
     let bonus="";
     if(streak%10===0){ crowns++; setTimeout(sfx.fanfare,150); if(lives<MAX_LIVES){ lives++; bonus=L(" · ¡+1 👑 y torre reconstruida!"," · +1 👑 and tower rebuilt!"); } else bonus=" · "+L("¡+1 👑!","+1 👑!"); }
@@ -885,12 +885,13 @@ function cPlay(){
   $("cFeedback").textContent=""; $("cFeedback").className="feedback";
   const lines=[{cls:"start",html:cScn.opening?L(`Empieza la partida: el rival tiene <b>5</b> de elixir`,`Match starts: your opponent has <b>5</b> elixir`):L(`El rival tiene <b>${cScn.start}</b> de elixir`,`Your opponent has <b>${cScn.start}</b> elixir`)}]
     .concat(cScn.steps.map(st=>st.type==="time"
-      ?{cls:"time",html:timeHtml(st)}
+      ?{cls:"time",html:timeHtml(st),n:Math.round(st.gain-st.leak)}
       :{cls:"play",html:`${st.card[3]?`<img class="mini" src="${st.card[3]}" alt="">`:`<i class="chip ${RCLASS[st.card[2]]}"></i>`}<b>${st.card[0]}</b>${ANSWER_TIME>10?`<span class="qdrop sm" aria-label="cuesta ${st.card[1]}">${st.card[1]}</span>`:""}`}));
   let k=0;
   const push=()=>{
     const li=document.createElement("li"); li.className=lines[k].cls; li.innerHTML=lines[k].html;
     feed.appendChild(li); k++; if(li.className==="play") sfx.card();
+    const nd=lines[k-1].n||0; for(let j=0;j<Math.min(nd,5);j++) setTimeout(sfx.drop,j*300);
     if(k<lines.length) cReveal=setTimeout(push,cCur.step);
     else cReveal=setTimeout(cAsk,cCur.step);
   };
@@ -923,7 +924,7 @@ function cAnswer(v){
   const t=Math.min(ANSWER_TIME,(performance.now()-cT0)/1000);
   const a=cScn.answer, ok=v===a, dev=v===null?a:Math.abs(v-a);
   cRes.push({ok,dev,t,near:v!==null&&Math.abs(v-a)===1});
-  ok?cStreak++:cStreak=0; ok?sfx.pop():sfx.err();
+  ok?cStreak++:cStreak=0; ok?sfx.ok():sfx.err();
   const prevPlays=cPlays;
   cPlays = ok ? Math.min(cLevel.maxPlays, cPlays+1) : Math.max(cLevel.plays, cPlays-1);
   document.querySelectorAll(".nbtn").forEach(b=>{
