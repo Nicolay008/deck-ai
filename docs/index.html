@@ -177,6 +177,12 @@ footer{max-width:30rem;margin:0 auto;padding:0 1rem 1.5rem;font-size:.8rem;color
 .mtitle{font-family:"Lilita One","Arial Rounded MT Bold",sans-serif;font-size:1.1rem;line-height:1.15}
 .mdesc{font-size:.85rem;color:var(--muted);line-height:1.3;margin-top:.15rem}
 .qdrop.sm{width:26px;height:31px;font-size:1rem;margin-left:.45rem;padding-top:.3rem;flex:none}
+.ix{display:inline-block;width:.72em;height:.88em;vertical-align:-.12em;margin:0 .1em;background:radial-gradient(circle at 35% 30%,var(--elixir-2),var(--elixir) 70%);clip-path:polygon(50% 0,100% 62%,92% 85%,70% 100%,30% 100%,8% 85%,0 62%)}
+.stages{display:grid;grid-template-columns:repeat(3,1fr)}
+.stages span{display:flex;flex-direction:column;align-items:center;gap:.2rem;font-size:.9rem;line-height:1.15}
+.stages span b{display:inline-grid;place-items:center;width:1.4em;height:1.4em;margin-right:.3em;border-radius:50%;background:var(--track);color:var(--elixir);font-size:.85em}
+.check{display:flex;align-items:center;gap:.55rem;font-weight:600;color:var(--muted);margin:0 0 1.25rem;cursor:pointer}
+.check input{width:1.15rem;height:1.15rem;accent-color:var(--elixir)}
 .desc{margin:.45rem 0 0;font-size:.92rem;min-height:1.4em}
 
 .edrops{display:inline-flex;gap:4px;margin-left:.6rem;vertical-align:middle}
@@ -195,23 +201,23 @@ footer{max-width:30rem;margin:0 auto;padding:0 1rem 1.5rem;font-size:.8rem;color
   <!-- SETUP -->
   <section id="setup">
     <h1>Elixir Lab</h1>
-    <p class="tagline">Entrena tu cabeza para contar elixir sin pensarlo.</p>
+    <p class="tagline">Mejora tu reacción y lee a tu rival.</p>
 
     <div class="modes" role="radiogroup" aria-label="Modo">
       <label class="mode">
         <input type="radio" name="mode" value="cost" checked>
         <span class="box">
           <span class="pv" id="pvCost"></span>
-          <span class="mtitle">Adivina el coste</span>
-          <span class="mdesc">Sale una carta: marca cuánto elixir cuesta.</span>
+          <span class="mtitle">Maestría de cartas</span>
+          <span class="mdesc">Aprende cuánto elixir <i class="ix" aria-hidden="true"></i> cuesta cada carta hasta dominarlas todas.</span>
         </span>
       </label>
       <label class="mode">
         <input type="radio" name="mode" value="count">
         <span class="box">
           <span class="pv" id="pvCount"></span>
-          <span class="mtitle">Cuenta su elixir</span>
-          <span class="mdesc">El rival juega cartas: di cuánto le queda.</span>
+          <span class="mtitle">Controla a tu rival</span>
+          <span class="mdesc">Aprende a llevar la cuenta del elixir de tu rival.</span>
         </span>
       </label>
     </div>
@@ -240,40 +246,23 @@ footer{max-width:30rem;margin:0 auto;padding:0 1rem 1.5rem;font-size:.8rem;color
 
     <div id="countOpts" class="hidden">
       <fieldset>
-        <legend>Nivel</legend>
-        <div class="seg">
-          <label><input type="radio" name="diff" value="facil"><span>Sin tiempo</span></label>
-          <label><input type="radio" name="diff" value="intermedio"><span>Regla 3 s</span></label>
-          <label><input type="radio" name="diff" value="medio" checked><span>Real</span></label>
-          <label><input type="radio" name="diff" value="dificil"><span>Doble</span></label>
+        <legend>Etapa</legend>
+        <div class="seg stages">
+          <label><input type="radio" name="diff" value="facil" checked><span><b>1</b> Entrenamiento</span></label>
+          <label><input type="radio" name="diff" value="intermedio"><span><b>2</b> Con reloj</span></label>
+          <label><input type="radio" name="diff" value="medio"><span><b>3</b> Partida real</span></label>
         </div>
         <p class="desc" id="d-diff"></p>
       </fieldset>
       <fieldset>
-        <legend>Modo</legend>
+        <legend>Desafío</legend>
         <div class="seg">
-          <label><input type="radio" name="rtime" value="20" checked><span>Entrenamiento</span></label>
+          <label><input type="radio" name="rtime" value="20" checked><span>Con ayuda</span></label>
           <label><input type="radio" name="rtime" value="10"><span>Insano 💀</span></label>
         </div>
         <p class="desc" id="d-rtime"></p>
       </fieldset>
-      <fieldset>
-        <legend>Cartas</legend>
-        <div class="seg">
-          <label><input type="radio" name="names" value="show" checked><span>Con nombre</span></label>
-          <label><input type="radio" name="names" value="hide"><span>Solo imagen</span></label>
-        </div>
-        <p class="desc" id="d-names"></p>
-      </fieldset>
-      <fieldset>
-        <legend>¿Cuántas rondas?</legend>
-        <div class="seg">
-          <label><input type="radio" name="rounds" value="5"><span>5</span></label>
-          <label><input type="radio" name="rounds" value="10" checked><span>10</span></label>
-          <label><input type="radio" name="rounds" value="15"><span>15</span></label>
-        </div>
-        <p class="desc">Cada ronda es una secuencia de jugadas del rival.</p>
-      </fieldset>
+      <label class="check"><input type="checkbox" id="showNames" checked> Mostrar el nombre de las cartas</label>
     </div>
 
     <button class="btn" id="start">Empezar</button>
@@ -346,7 +335,7 @@ footer{max-width:30rem;margin:0 auto;padding:0 1rem 1.5rem;font-size:.8rem;color
     </div>
     <div class="ctrl">
       <button class="link" id="cReplay">↺ Ver de nuevo</button>
-      <button class="link" id="cQuit">Salir</button>
+      <button class="link" id="cQuit">Terminar</button>
     </div>
     <div class="card" id="cCard">
       <span class="phase" id="cPhase"></span>
@@ -364,7 +353,7 @@ footer{max-width:30rem;margin:0 auto;padding:0 1rem 1.5rem;font-size:.8rem;color
 
   <!-- COUNT RESULTS -->
   <section id="countResults" class="hidden">
-    <h1>Tu nota de conteo</h1>
+    <h1>Tu nota</h1>
     <div class="score display" id="cScore"></div>
     <div class="grade-sub" id="cSub"></div>
     <div class="stats">
@@ -560,20 +549,19 @@ $("start").addEventListener("click",()=>{
 });
 
 // ================= PANTALLA DE INICIO =================
+const IX='<i class="ix" aria-hidden="true"></i>';
 const DESC={
-  time:{8:"8 segundos por carta. Para empezar con calma.",5:"5 segundos por carta. El ritmo de una partida.",3:"3 segundos por carta. Sin tiempo para dudar."},
-  diff:{facil:"3 jugadas, solo restar costes. Ves la lista entera.",
-        intermedio:"4 jugadas y el tiempo suma: cada 3 s es +1 exacto. Ves la lista entera.",
-        medio:"Como en partida: +1 cada 2,8 s y solo ves la última jugada.",
-        dificil:"Doble elixir: +1 cada 1,4 s, 6 jugadas y solo ves la última."},
-  names:{show:"Nombre junto a cada carta.",hide:"Solo la imagen, como en el juego."},
-  rtime:{20:"Ves el coste de cada carta y tienes 20 s. Para practicar la suma y la resta.",10:"La prueba de fuego: sin costes y solo 10 s. ¿Qué tan pro eres?"}
+  time:{8:"Tienes 8 segundos por carta. Para empezar con calma.",5:"Tienes 5 segundos por carta. El ritmo de una partida.",3:"Solo 3 segundos por carta: o te sale solo o fallas."},
+  diff:{facil:`El rival suelta 3 o 4 cartas seguidas, sin reloj. Si aciertas, la siguiente ronda trae una carta más.`,
+        intermedio:`Ahora el reloj también cuenta: <b>⏱ 3 segundos = +1 gota de elixir ${IX}</b>. Si aciertas, también suben las cartas.`,
+        medio:`Como en el juego: <b>⏱ 2,8 segundos = +1 gota ${IX}</b>, y las 3 últimas rondas son en doble elixir. Solo verás la última carta que jugó.`},
+  rtime:{20:`Cada carta muestra su coste en gotas de elixir ${IX} y tienes 20 segundos para responder.`,10:"Sin ayudas y solo 10 segundos. La prueba de fuego: ¿qué tan pro eres?"}
 };
-const LEVEL_NAME={"Fácil":"Sin tiempo","Intermedio":"Regla de 3 s","Medio":"Partida real","Difícil":"Doble elixir"};
+const LEVEL_NAME={"Fácil":"Entrenamiento","Intermedio":"Con reloj","Medio":"Partida real","Difícil":"Doble elixir"};
 function updateDescs(){
   Object.keys(DESC).forEach(k=>{
     const el=$("d-"+k), r=document.querySelector(`input[name="${k}"]:checked`);
-    if(el&&r) el.textContent=DESC[k][r.value];
+    if(el&&r) el.innerHTML=DESC[k][r.value];
   });
 }
 function cardVisual(name){
@@ -630,17 +618,17 @@ function recordBanner(el, prevNotas, nota){
   else el.classList.add("hidden");
 }
 const COST_GROUPS=[{id:8,label:"Fácil",color:"var(--ok)"},{id:5,label:"Normal",color:"var(--elixir)"},{id:3,label:"Difícil",color:"var(--gold)"}];
-const COUNT_GROUPS=[{id:"Fácil",label:"Sin tiempo",color:"var(--ok)"},{id:"Intermedio",label:"Regla de 3 s",color:"#3FA9F5"},{id:"Medio",label:"Partida real",color:"var(--elixir)"},{id:"Difícil",label:"Doble elixir",color:"var(--gold)"}];
+const COUNT_GROUPS=[{id:"Fácil",label:"Entrenamiento",color:"var(--ok)"},{id:"Intermedio",label:"Con reloj",color:"#3FA9F5"},{id:"Medio",label:"Partida real",color:"var(--elixir)"},{id:"Difícil",label:"Doble elixir",color:"var(--gold)"}];
 
 // ================= MODO CONTEO =================
 const CKEY="elixirCountV1";
 const LEVELS={
-  facil:{label:"Fácil",plays:3,time:false,double:false,solo:false,step:2200,startMin:7},
-  intermedio:{label:"Intermedio",plays:4,time:true,double:false,solo:false,step:2200,startMin:3,easyTime:true},
-  medio:{label:"Medio",plays:4,time:true,double:false,solo:true,step:1900,startMin:3},
-  dificil:{label:"Difícil",plays:6,time:true,double:true,solo:true,step:1700,startMin:3}
+  facil:{label:"Fácil",maxPlays:4,plays:3,time:false,double:false,solo:false,step:2200,startMin:7},
+  intermedio:{label:"Intermedio",maxPlays:6,plays:3,time:true,double:false,solo:false,step:2200,startMin:3,easyTime:true},
+  medio:{label:"Medio",maxPlays:6,plays:4,time:true,double:false,solo:true,step:1900,startMin:3},
+  dificil:{label:"Difícil",maxPlays:6,plays:6,time:true,double:true,solo:true,step:1700,startMin:3}
 };
-let ANSWER_TIME=20;
+let ANSWER_TIME=20, cCur=null, cPlays=3;
 const RCLASS={"Común":"r-com","Especial":"r-esp","Épica":"r-epi","Legendaria":"r-leg","Campeón":"r-cam"};
 let cLevel=null,cRounds=0,cIdx=0,cRes=[],cStreak=0,cScn=null,cTimer=null,cT0=0,cLocked=false,cReveal=null;
 function loadC(){try{return JSON.parse(localStorage.getItem(CKEY))||{attempts:[]};}catch(e){return {attempts:[]};}}
@@ -701,15 +689,20 @@ function timeHtml(st){
 function startCount(){
   cLevel=LEVELS[document.querySelector('input[name="diff"]:checked').value];
   ANSWER_TIME=+document.querySelector('input[name="rtime"]:checked').value;
-  cRounds=+document.querySelector('input[name="rounds"]:checked').value;
-  cIdx=0;cRes=[];cStreak=0;
+  cRounds=10;
+  cIdx=0;cRes=[];cStreak=0;cPlays=cLevel.plays;
   show("count"); cNextRound();
 }
 
 function cNextRound(){
   if(cIdx>=cRounds) return cFinish();
   cLocked=true; clearInterval(cTimer); clearTimeout(cReveal);
-  cScn=genScenario(cLevel);
+  // Partida real: las 3 últimas rondas, en doble elixir
+  const dbl = cLevel===LEVELS.medio && cIdx>=cRounds-3;
+  cCur={...cLevel, plays:cPlays, double:cLevel.double||dbl};
+  // si no hay escenario posible con tantas cartas, prueba con una menos
+  cScn=null;
+  for(let k=cPlays;k>=1&&!cScn;k--) cScn=genScenario({...cCur,plays:k});
   cPlay();
 }
 function cPlay(){
@@ -719,10 +712,10 @@ function cPlay(){
   $("cStreak").textContent=`Racha ${cStreak}`;
   const ex=cRes.filter(r=>r.ok).length;
   $("cPoints").textContent=`${ex} exacta${ex===1?"":"s"}`;
-  $("cPhase").textContent=cLevel.easyTime?"Regla simple · +1 cada 3 s":(cLevel.double?"Doble elixir · +1 cada 1,4 s":(cLevel.time?"Elixir normal · +1 cada 2,8 s":"Sin regeneración"));
+  $("cPhase").innerHTML=cCur.easyTime?`⏱ 3 s = +1 ${IX}`:(cCur.double?`Doble elixir · ⏱ 1,4 s = +1 ${IX}`:(cCur.time?`⏱ 2,8 s = +1 ${IX}`:"Entrenamiento · el reloj no cuenta"));
   $("cCard").className="card";
-  const feed=$("feed"); feed.innerHTML=""; feed.classList.toggle("solo",cLevel.solo);
-  feed.classList.toggle("noname",document.querySelector('input[name="names"]:checked').value==="hide");
+  const feed=$("feed"); feed.innerHTML=""; feed.classList.toggle("solo",cCur.solo);
+  feed.classList.toggle("noname",!$("showNames").checked);
   ["cAsk","cBar","nums","cNext","breakdown"].forEach(id=>$(id).classList.add("hidden"));
   $("cFeedback").textContent=""; $("cFeedback").className="feedback";
   const lines=[{cls:"start",html:cScn.opening?`Empieza la partida: el rival tiene <b>5</b> de elixir`:`El rival tiene <b>${cScn.start}</b> de elixir`}]
@@ -733,14 +726,14 @@ function cPlay(){
   const push=()=>{
     const li=document.createElement("li"); li.className=lines[k].cls; li.innerHTML=lines[k].html;
     feed.appendChild(li); k++;
-    if(k<lines.length) cReveal=setTimeout(push,cLevel.step);
-    else cReveal=setTimeout(cAsk,cLevel.step);
+    if(k<lines.length) cReveal=setTimeout(push,cCur.step);
+    else cReveal=setTimeout(cAsk,cCur.step);
   };
   push();
 }
 
 function cAsk(){
-  if(cLevel.solo) $("feed").innerHTML="";
+  if(cCur.solo) $("feed").innerHTML="";
   $("cAsk").classList.remove("hidden"); $("cBar").classList.remove("hidden"); $("nums").classList.remove("hidden");
   document.querySelectorAll(".nbtn").forEach(b=>{b.className="nbtn";b.disabled=false;});
   cLocked=false; cT0=performance.now();
@@ -765,13 +758,15 @@ function cAnswer(v){
   const a=cScn.answer, ok=v===a, dev=v===null?a:Math.abs(v-a);
   cRes.push({ok,dev,t,near:v!==null&&Math.abs(v-a)===1});
   ok?cStreak++:cStreak=0;
+  const prevPlays=cPlays;
+  cPlays = ok ? Math.min(cLevel.maxPlays, cPlays+1) : Math.max(cLevel.plays, cPlays-1);
   document.querySelectorAll(".nbtn").forEach(b=>{
     b.disabled=true;
     if(+b.dataset.v===a) b.classList.add("right"); else if(+b.dataset.v===v) b.classList.add("wrong");
   });
   $("cCard").classList.add(ok?"ok":"bad");
   const fb=$("cFeedback"); fb.classList.add(ok?"ok":"bad");
-  fb.textContent = ok?`Exacto: ${a}`:(v===null?`Se acabó el tiempo: tenía ${a}`:`Tenía ${a}, dijiste ${v}`);
+  fb.textContent = ok?`Exacto: ${a}${cPlays>prevPlays?` · ¡Sube a ${cPlays} cartas!`:""}`:(v===null?`Se acabó el tiempo: tenía ${a}`:`Tenía ${a}, dijiste ${v}`);
   // desglose paso a paso
   const bd=$("breakdown"); bd.innerHTML="";
   const row=(l,r,cls="")=>{const li=document.createElement("li");li.innerHTML=`<span class="${cls}">${l}</span><span>${r}</span>`;bd.appendChild(li);};
@@ -779,7 +774,7 @@ function cAnswer(v){
   cScn.steps.forEach(st=>{
     if(st.type==="play") row(`− ${st.card[1]} ${st.card[0]}`,f1(st.after));
     else{
-      row(`+ ${f1(st.gain-st.leak)} en ${st.secs} s${st.opening?" (espera inicial)":""}`,f1(st.after));
+      row(`+ ${f1(st.gain-st.leak)} ${IX} en ${st.secs} s${st.opening?" (espera inicial)":""}`,f1(st.after));
       if(st.leak>0.05) row(`Llegó a 10: desperdició ${f1(st.leak)}`,"","leak");
     }
   });
@@ -791,7 +786,7 @@ function cAnswer(v){
 function cNextClick(){ cIdx++; cNextRound(); }
 $("cNext").addEventListener("click",cNextClick);
 $("cReplay").addEventListener("click",cPlay);
-$("cQuit").addEventListener("click",()=>{clearInterval(cTimer);clearTimeout(cReveal);cLocked=true;refreshSetup();show("setup");});
+$("cQuit").addEventListener("click",()=>{clearInterval(cTimer);clearTimeout(cReveal);cLocked=true;if(cRes.length) cFinish(); else {refreshSetup();show("setup");}});
 $("quit").addEventListener("click",()=>{clearInterval(timer);clearTimeout(nextT);locked=true;refreshSetup();show("setup");});
 
 function cFinish(){
