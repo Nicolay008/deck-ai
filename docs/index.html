@@ -157,6 +157,7 @@ footer{max-width:30rem;margin:0 auto;padding:0 1rem 1.5rem;font-size:.8rem;color
 .feed.noname li.play img + b{display:none}
 
 .ctrl{display:flex;justify-content:space-between;align-items:center;margin:-.25rem 0 .5rem}
+.ctrl .snd{text-decoration:none;font-size:1.1rem}
 .ctrl .link{padding:.3rem 0;margin:0;font-weight:700}
 
 .tagline{font-size:1.05rem;margin:0 0 1.25rem}
@@ -205,6 +206,7 @@ dialog#about ul.next li{margin:.3rem 0}
 dialog#about .studio{margin-top:1rem;font-size:.9rem}
 footer .link{display:block;margin:0 auto .5rem;font-size:.9rem}
 .top{display:flex;align-items:center;justify-content:space-between;gap:1rem}
+.topbtns{display:flex;gap:.4rem}
 .langbtn{border:2px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;font-weight:800;font-size:.85rem;border-radius:999px;padding:.3rem .75rem;cursor:pointer}
 .badge-info{margin:-.25rem 0 .75rem}
 .desc{margin:.45rem 0 0;font-size:.92rem;min-height:1.4em}
@@ -224,7 +226,7 @@ footer .link{display:block;margin:0 auto .5rem;font-size:.9rem}
 <main>
   <!-- SETUP -->
   <section id="setup">
-    <div class="top"><h1>Elixir Lab</h1><button class="langbtn" id="langBtn" aria-label="Language"></button></div>
+    <div class="top"><h1>Elixir Lab</h1><div class="topbtns"><button class="langbtn snd" id="sndBtn" aria-label="Sonido"></button><button class="langbtn" id="langBtn" aria-label="Language"></button></div></div>
     <p class="tagline" data-en="Sharpen your reactions and read your opponent.">Mejora tu reacción y lee a tu rival.</p>
 
     <div class="modes" role="radiogroup" aria-label="Modo">
@@ -295,7 +297,7 @@ footer .link{display:block;margin:0 auto .5rem;font-size:.9rem}
       <span id="points">0 aciertos</span>
     </div>
     <div class="ctrl">
-      <span></span>
+      <button class="link snd" aria-label="Sonido"></button>
       <button class="link" id="quit" data-en="Quit">Salir</button>
     </div>
     <div class="card" id="card">
@@ -351,6 +353,7 @@ footer .link{display:block;margin:0 auto .5rem;font-size:.9rem}
       <span id="cPoints">0 exactas</span>
     </div>
     <div class="ctrl">
+      <button class="link snd" aria-label="Sonido"></button>
       <button class="link" id="cReplay" data-en="↺ Replay">↺ Ver de nuevo</button>
       <button class="link" id="cQuit" data-en="Finish">Terminar</button>
     </div>
@@ -422,6 +425,46 @@ document.documentElement.lang=LANG;
 if(LANG==="en") document.querySelectorAll("[data-en]").forEach(el=>{el.innerHTML=el.dataset.en;});
 $("langBtn").textContent=LANG==="en"?"ES":"EN";
 $("langBtn").addEventListener("click",()=>{try{localStorage.setItem(LANG_KEY,LANG==="en"?"es":"en");}catch(e){} location.reload();});
+
+// ================= SONIDO (generado con Web Audio, sin archivos) =================
+const SND_KEY="elixirSound";
+let soundOn=(()=>{try{return localStorage.getItem(SND_KEY)!=="off";}catch(e){return true;}})();
+let actx=null, master=null;
+function audio(){
+  if(!soundOn) return null;
+  if(!actx){ try{ actx=new (window.AudioContext||window.webkitAudioContext)(); master=actx.createGain(); master.gain.value=0.2; master.connect(actx.destination);}catch(e){ return null; } }
+  if(actx.state==="suspended") actx.resume();
+  return actx;
+}
+function tone(freq,dur,{type="sine",to=null,delay=0,vol=1}={}){
+  const a=audio(); if(!a) return;
+  const t=a.currentTime+delay, o=a.createOscillator(), g=a.createGain();
+  o.type=type; o.frequency.setValueAtTime(freq,t); if(to) o.frequency.exponentialRampToValueAtTime(to,t+dur);
+  g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(vol,t+0.01); g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+  o.connect(g); g.connect(master); o.start(t); o.stop(t+dur+0.02);
+}
+function noise(dur,{freq=3000,to=null,q=1,delay=0,vol=.6,shape="decay"}={}){
+  const a=audio(); if(!a) return;
+  const t=a.currentTime+delay, n=Math.floor(a.sampleRate*dur), buf=a.createBuffer(1,n,a.sampleRate), d=buf.getChannelData(0);
+  for(let i=0;i<n;i++){ const x=i/n; d[i]=(Math.random()*2-1)*(shape==="swell"?Math.sin(Math.PI*x):(1-x)); }
+  const src=a.createBufferSource(), f=a.createBiquadFilter(), g=a.createGain();
+  src.buffer=buf; f.type="bandpass"; f.frequency.setValueAtTime(freq,t); if(to) f.frequency.exponentialRampToValueAtTime(to,t+dur); f.Q.value=q; g.gain.value=vol;
+  src.connect(f); f.connect(g); g.connect(master); src.start(t);
+}
+const sfx={
+  pop:   ()=>{ tone(620,.12,{to:1100,vol:.9}); },                                 // acierto: pop de elixir
+  err:   ()=>{ tone(210,.22,{type:"triangle",to:140,vol:.9}); },                   // fallo
+  tick:  ()=>{ tone(1500,.04,{type:"square",vol:.35}); },                          // últimos segundos
+  card:  ()=>{ noise(.2,{freq:700,to:3200,q:1.2,vol:.45,shape:"swell"}); },        // carta que se desliza
+  swords:()=>{ noise(.09,{freq:4200,q:3}); noise(.12,{freq:5200,q:4,delay:.09}); tone(2400,.35,{type:"triangle",delay:.09,vol:.25}); }, // empezar
+  fanfare:()=>{ [523,659,784,1047].forEach((f,i)=>tone(f,.18,{type:"triangle",delay:i*.09,vol:.7})); } // corona, récord, insignia
+};
+function renderSnd(){ document.querySelectorAll(".snd").forEach(b=>{ b.textContent=soundOn?"🔊":"🔇"; b.setAttribute("aria-label",soundOn?L("Silenciar","Mute"):L("Activar sonido","Unmute")); }); }
+document.querySelectorAll(".snd").forEach(b=>b.addEventListener("click",()=>{ soundOn=!soundOn; try{localStorage.setItem(SND_KEY,soundOn?"on":"off");}catch(e){} renderSnd(); if(soundOn) sfx.pop(); }));
+renderSnd();
+// tic en los últimos 2 segundos (uno por segundo)
+let lastTickSec=null;
+function warnTick(leftSec){ const sec=Math.ceil(leftSec); if(sec<=2 && sec>0 && sec!==lastTickSec){ lastTickSec=sec; sfx.tick(); } if(sec>2) lastTickSec=null; }
 const RAR_EN={"Común":"Common","Especial":"Rare","Épica":"Epic","Legendaria":"Legendary","Campeón":"Champion"};
 const LOCALE=L("es-PE","en-US");
 const KEY = "elixirQuizV2";
@@ -509,6 +552,7 @@ function next(){
   $("card").className="card";
   document.querySelectorAll(".drop").forEach(b=>{b.className="drop";b.disabled=false;});
   $("progress").textContent=heartsTxt();
+  sfx.card();
   $("streak").textContent=`${L("Racha","Streak")} ${streak}`;
   $("points").textContent=L(`${hits} acierto${hits===1?"":"s"}`,`${hits} correct`);
   t0=performance.now();
@@ -518,6 +562,7 @@ function tick(){
   const left=Math.max(0,1-(performance.now()-t0)/(timeLimit*1000));
   const on=Math.ceil(left*10);
   [...$("bar").children].forEach((s,i)=>s.classList.toggle("off",i>=on));
+  warnTick(left*timeLimit);
   if(left<=0) answer(null);
 }
 
@@ -535,14 +580,14 @@ function answer(v){
     else if(+b.dataset.v===v) b.classList.add("wrong");
   });
   if(ok){
-    hits++; streak++;
+    hits++; streak++; sfx.pop();
     $("card").classList.add("ok"); $("feedback").classList.add("ok");
     let bonus="";
-    if(streak%10===0){ crowns++; if(lives<MAX_LIVES){ lives++; bonus=L(" · ¡+1 👑 y torre reconstruida!"," · +1 👑 and tower rebuilt!"); } else bonus=" · "+L("¡+1 👑!","+1 👑!"); }
+    if(streak%10===0){ crowns++; setTimeout(sfx.fanfare,150); if(lives<MAX_LIVES){ lives++; bonus=L(" · ¡+1 👑 y torre reconstruida!"," · +1 👑 and tower rebuilt!"); } else bonus=" · "+L("¡+1 👑!","+1 👑!"); }
     $("progress").textContent=heartsTxt();
     $("feedback").textContent=L(`Correcto, ${cost} de elixir${bonus}`,`Correct, ${cost} elixir${bonus}`);
   }else{
-    streak=0; misses.push({card:deck[idx],you:v});
+    streak=0; misses.push({card:deck[idx],you:v}); sfx.err();
     $("card").classList.add("bad"); $("feedback").classList.add("bad");
     lives--; $("progress").textContent=heartsTxt();
     $("feedback").textContent = (v===null ? L(`Se acabó el tiempo: cuesta ${cost}`,`Time’s up: it costs ${cost}`) : L(`Cuesta ${cost}, no ${v}`,`It costs ${cost}, not ${v}`)) + (lives<=0?L(" · Cayó tu torre del rey"," · Your King Tower fell"):"");
@@ -588,7 +633,7 @@ function finish(){
   const prevBest=h.attempts.length?Math.max(...h.attempts.map(attHits)):0;
   recordBanner($("recBanner"), h.attempts.filter(a=>a.t===timeLimit).map(attHits), hits);
   const newB=BADGES.filter(b=>hits>=badgeNeed(b) && prevBest<badgeNeed(b));
-  if(newB.length){ const el=$("recBanner"); el.className="banner rec"; el.textContent=`${L("¡Nueva insignia!","New badge!")} ${newB.map(b=>b.i+" "+b.t).join(" · ")}`; }
+  if(newB.length){ setTimeout(sfx.fanfare,200); const el=$("recBanner"); el.className="banner rec"; el.textContent=`${L("¡Nueva insignia!","New badge!")} ${newB.map(b=>b.i+" "+b.t).join(" · ")}`; }
   h.attempts.push({date:new Date().toISOString(),n,t:timeLimit,nota,acc,dev,avgT,hits});
   h.attempts=h.attempts.slice(-100);
   save(h);
@@ -610,6 +655,7 @@ function renderHistory(h){
 }
 
 $("start").addEventListener("click",()=>{
+  sfx.swords();
   const m=document.querySelector('input[name="mode"]:checked').value;
   m==="count"?startCount():startFromSettings();
 });
@@ -688,7 +734,7 @@ function progressChart(el, attempts, key, groups, current, maxV=20){
 function recordBanner(el, prevNotas, nota){
   el.className="banner";
   if(!prevNotas.length){el.classList.add("first");el.textContent=L("Primera partida en este nivel: ya tienes tu marca a batir","First run at this level: now you have a score to beat");}
-  else if(nota>Math.max(...prevNotas)){el.classList.add("rec");el.textContent=L(`¡Nuevo récord! Superas tu ${fmtV(Math.max(...prevNotas))}`,`New record! You beat your ${fmtV(Math.max(...prevNotas))}`);}
+  else if(nota>Math.max(...prevNotas)){el.classList.add("rec"); setTimeout(sfx.fanfare,200);el.textContent=L(`¡Nuevo récord! Superas tu ${fmtV(Math.max(...prevNotas))}`,`New record! You beat your ${fmtV(Math.max(...prevNotas))}`);}
   else el.classList.add("hidden");
 }
 const COST_GROUPS=[{id:8,label:L("Fácil","Easy"),color:"var(--ok)"},{id:5,label:"Normal",color:"var(--elixir)"},{id:3,label:L("Difícil","Hard"),color:"var(--gold)"}];
@@ -844,7 +890,7 @@ function cPlay(){
   let k=0;
   const push=()=>{
     const li=document.createElement("li"); li.className=lines[k].cls; li.innerHTML=lines[k].html;
-    feed.appendChild(li); k++;
+    feed.appendChild(li); k++; if(li.className==="play") sfx.card();
     if(k<lines.length) cReveal=setTimeout(push,cCur.step);
     else cReveal=setTimeout(cAsk,cCur.step);
   };
@@ -862,6 +908,7 @@ function cTick(){
   const left=Math.max(0,1-(performance.now()-cT0)/(ANSWER_TIME*1000));
   const on=Math.ceil(left*10);
   [...$("cBar").children].forEach((s,i)=>s.classList.toggle("off",i>=on));
+  warnTick(left*ANSWER_TIME);
   if(left<=0) cAnswer(null);
 }
 document.addEventListener("keydown",e=>{
@@ -876,7 +923,7 @@ function cAnswer(v){
   const t=Math.min(ANSWER_TIME,(performance.now()-cT0)/1000);
   const a=cScn.answer, ok=v===a, dev=v===null?a:Math.abs(v-a);
   cRes.push({ok,dev,t,near:v!==null&&Math.abs(v-a)===1});
-  ok?cStreak++:cStreak=0;
+  ok?cStreak++:cStreak=0; ok?sfx.pop():sfx.err();
   const prevPlays=cPlays;
   cPlays = ok ? Math.min(cLevel.maxPlays, cPlays+1) : Math.max(cLevel.plays, cPlays-1);
   document.querySelectorAll(".nbtn").forEach(b=>{
