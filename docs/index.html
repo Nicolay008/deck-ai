@@ -12,6 +12,7 @@
   --bg:#F3EEF8; --surface:#FFFFFF; --ink:#2A1846; --muted:#6B5A86;
   --elixir:#B52FC7; --elixir-2:#E06AF0; --gold:#C98A12; --ok:#1E9A5A; --bad:#D2344A;
   --line:#DCCFEA; --track:#E7DCF2;
+  --glass:rgba(255,255,255,.78); --glow:rgba(181,47,199,.28); --bg2:#E6D9F5; --hex:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2256%22%20height%3D%2297%22%20viewBox%3D%220%200%2056%2097%22%3E%3Cpath%20d%3D%22M28%200%20L56%2016%20L56%2048%20L28%2064%20L0%2048%20L0%2016%20Z%20M28%2064%20L28%2097%22%20fill%3D%22none%22%20stroke%3D%22rgba%28120%2C70%2C170%2C0.10%29%22%20stroke-width%3D%221%22/%3E%3C/svg%3E");
   color-scheme: light;
   box-sizing:border-box;
   padding-top:env(safe-area-inset-top,0px);
@@ -22,6 +23,7 @@
     --bg:#170D27; --surface:#241638; --ink:#F2EAFB; --muted:#B4A3CC;
     --elixir:#D255E4; --elixir-2:#F08CFB; --gold:#F2C14E; --ok:#4FD18C; --bad:#FF6B7D;
     --line:#3A2754; --track:#33224B;
+    --glass:rgba(36,22,56,.72); --glow:rgba(210,85,228,.38); --bg2:#2E1650; --hex:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2256%22%20height%3D%2297%22%20viewBox%3D%220%200%2056%2097%22%3E%3Cpath%20d%3D%22M28%200%20L56%2016%20L56%2048%20L28%2064%20L0%2048%20L0%2016%20Z%20M28%2064%20L28%2097%22%20fill%3D%22none%22%20stroke%3D%22rgba%28200%2C150%2C255%2C0.07%29%22%20stroke-width%3D%221%22/%3E%3C/svg%3E");
     color-scheme: dark;
   }
 }
@@ -29,11 +31,12 @@
   --bg:#170D27; --surface:#241638; --ink:#F2EAFB; --muted:#B4A3CC;
   --elixir:#D255E4; --elixir-2:#F08CFB; --gold:#F2C14E; --ok:#4FD18C; --bad:#FF6B7D;
   --line:#3A2754; --track:#33224B;
+  --glass:rgba(36,22,56,.72); --glow:rgba(210,85,228,.38); --bg2:#2E1650; --hex:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2256%22%20height%3D%2297%22%20viewBox%3D%220%200%2056%2097%22%3E%3Cpath%20d%3D%22M28%200%20L56%2016%20L56%2048%20L28%2064%20L0%2048%20L0%2016%20Z%20M28%2064%20L28%2097%22%20fill%3D%22none%22%20stroke%3D%22rgba%28200%2C150%2C255%2C0.07%29%22%20stroke-width%3D%221%22/%3E%3C/svg%3E");
   color-scheme: dark;
 }
 *,*::before,*::after{box-sizing:inherit}
 html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
-body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);
+body{margin:0;min-height:100%;background-color:var(--bg);background-image:var(--hex),radial-gradient(120% 70% at 50% -10%,var(--bg2),var(--bg) 70%);background-attachment:fixed;color:var(--ink);
   font-family:"Nunito",system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.5}
 main{max-width:30rem;margin:0 auto;padding:1.25rem 1rem 2rem}
 h1,.display{font-family:"Lilita One","Arial Rounded MT Bold","Trebuchet MS",sans-serif;font-weight:400;letter-spacing:.01em}
@@ -190,9 +193,11 @@ footer{max-width:30rem;margin:0 auto;padding:0 1rem 1.5rem;font-size:.8rem;color
 .seg label>span{flex:1;display:flex;align-items:center;justify-content:center;text-align:center}
 .stages label>span{flex-direction:column}
 
-.badges{display:flex;gap:.5rem;margin:0 0 .75rem}
+.badges{display:grid;grid-template-columns:repeat(4,1fr);gap:.5rem;margin:0 0 .75rem}
+#resumeBtn{margin-bottom:.75rem}
 .badge{font:inherit;cursor:pointer;flex:1;text-align:center;padding:.5rem .25rem;border-radius:.8rem;background:var(--surface);border:2px solid var(--line);font-weight:800;font-size:.8rem;color:var(--muted);line-height:1.2}
 .badge .bi{display:block;font-size:1.5rem;filter:grayscale(1);opacity:.35}
+.badge .bi.sm{font-size:1rem;white-space:nowrap;line-height:1.5rem;letter-spacing:-.15em}
 .badge.on{border-color:var(--gold);color:var(--ink)}
 .badge.on .bi{filter:none;opacity:1}
 dialog#about{max-width:28rem;width:calc(100% - 2rem);border:2px solid var(--line);border-radius:1.25rem;background:var(--surface);color:var(--ink);padding:1.25rem 1.25rem 1rem}
@@ -219,6 +224,18 @@ footer .link{display:block;margin:0 auto .5rem;font-size:.9rem}
 .edrop.lost{background:var(--muted);opacity:0}
 .feed.solo .edrop{width:20px;height:24px}
 @keyframes dropin{from{opacity:0;transform:translateY(-8px) scale(.5)}to{opacity:1;transform:none}}
+
+/* tarjetas de cristal */
+.mode .box,.seg span,.card,.badge,.lives-intro,.tbl,.misses{background:var(--glass);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.mode input:checked+.box,.seg input:checked+span{box-shadow:0 0 0 1px var(--elixir),0 0 18px var(--glow)}
+.badge.on{box-shadow:0 0 14px rgba(242,193,78,.25)}
+/* cuentagotas de progreso */
+.pipette{margin:0 0 1rem}
+.pipette svg{display:block;width:100%;height:auto;overflow:visible}
+.pipette .pg-tube{fill:var(--glass);stroke:var(--line);stroke-width:2}
+.pipette .pg-bulb{fill:var(--elixir);opacity:.85}
+.pipette .pg-liquid{transition:width .45s ease}
+.pipette .pg-txt{font:800 14px Nunito,system-ui,sans-serif;fill:var(--ink)}
 @media (prefers-reduced-motion: reduce){*{transition:none!important}.edrop{animation:none;opacity:1}}
 </style>
 </head>
@@ -284,6 +301,7 @@ footer .link{display:block;margin:0 auto .5rem;font-size:.9rem}
       <label class="check"><input type="checkbox" id="showNames" checked> <span data-en="Show card names">Mostrar el nombre de las cartas</span></label>
     </div>
 
+    <button class="btn ghost hidden" id="resumeBtn"></button>
     <button class="btn" id="start" data-en="Start">Empezar</button>
     <button class="btn ghost hidden" id="practiceHard" data-en="Practice my hardest cards">Practicar mis cartas difíciles</button>
     <div class="best" id="best"></div>
@@ -298,8 +316,9 @@ footer .link{display:block;margin:0 auto .5rem;font-size:.9rem}
     </div>
     <div class="ctrl">
       <button class="link snd" aria-label="Sonido"></button>
-      <button class="link" id="quit" data-en="Quit">Salir</button>
+      <button class="link" id="quit" data-en="Save &amp; quit">Guardar y salir</button>
     </div>
+    <div class="pipette" id="pipette" aria-hidden="true"></div>
     <div class="card" id="card">
       <img id="cardImg" class="cimg" alt="" width="96" height="115" decoding="async">
       <div class="name display" id="name">—</div>
@@ -314,6 +333,7 @@ footer .link{display:block;margin:0 auto .5rem;font-size:.9rem}
   <section id="results" class="hidden">
     <h1 data-en="Your score">Tu marca</h1>
     <div class="score display" id="score"></div>
+    <div class="pipette" id="pipetteRes" aria-hidden="true"></div>
     <div class="grade-sub" id="gradeSub"></div>
     <div class="stats">
       <div data-en="&lt;b id=&quot;acc&quot;&gt;&lt;/b&gt;accuracy"><b id="acc"></b>precisión</div>
@@ -470,7 +490,7 @@ const RAR_EN={"Común":"Common","Especial":"Rare","Épica":"Epic","Legendaria":"
 const LOCALE=L("es-PE","en-US");
 const KEY = "elixirQuizV2";
 let deck=[], idx=0, hits=0, streak=0, misses=[], answers=[];
-let timeLimit=5, timer=null, t0=0, locked=false, nextT=null, lives=3;
+let timeLimit=5, timer=null, t0=0, locked=false, nextT=null, lives=3, runFull=false;
 const MAX_LIVES=3;
 let crowns=0;
 const heartsTxt=()=>"🏰".repeat(lives)+"💥".repeat(MAX_LIVES-lives)+(crowns?`  👑${crowns}`:"");
@@ -504,6 +524,7 @@ function hardCards(h){
 
 function refreshSetup(){
   updateDescs(); if(CARDS.length){ renderPreviews(); renderBadges(); }
+  renderResume(document.querySelector('input[name="mode"]:checked').value==="count");
   const isCount=document.querySelector('input[name="mode"]:checked').value==="count";
   $("costOpts").classList.toggle("hidden",isCount);
   $("countOpts").classList.toggle("hidden",!isCount);
@@ -536,9 +557,12 @@ document.addEventListener("keydown",e=>{
 function start(list){
   timeLimit = +document.querySelector('input[name="time"]:checked').value;
   deck=list; idx=0; hits=0; streak=0; misses=[]; answers=[]; lives=MAX_LIVES; crowns=0;
+  runFull = list.length===CARDS.length;   // solo una partida con todas las cartas cuenta para la maestría
   show("game"); next();
 }
 function startFromSettings(){
+  if(loadRun() && !confirm(L("Tienes una partida guardada. ¿Empezar una nueva? La guardada se perderá.","You have a saved run. Start a new one? The saved one will be lost."))) return;
+  clearRun();
   start(shuffle(CARDS));
 }
 
@@ -553,6 +577,7 @@ function next(){
   $("card").className="card";
   document.querySelectorAll(".drop").forEach(b=>{b.className="drop";b.disabled=false;});
   $("progress").textContent=heartsTxt();
+  setPipette("pipette",hits,deck.length);
   sfx.card();
   $("streak").textContent=`${L("Racha","Streak")} ${streak}`;
   $("points").textContent=L(`${hits} acierto${hits===1?"":"s"}`,`${hits} correct`);
@@ -580,7 +605,7 @@ function answer(v){
     else if(+b.dataset.v===v) b.classList.add("wrong");
   });
   if(ok){
-    hits++; streak++;
+    hits++; streak++; setPipette("pipette",hits,deck.length);
     $("card").classList.add("ok"); $("feedback").classList.add("ok");
     let bonus="";
     if(streak%10===0){ crowns++; setTimeout(sfx.fanfare,150); if(lives<MAX_LIVES){ lives++; bonus=L(" · ¡+1 👑 y torre reconstruida!"," · +1 👑 and tower rebuilt!"); } else bonus=" · "+L("¡+1 👑!","+1 👑!"); }
@@ -606,9 +631,12 @@ function finish(){
   const dev=answers.reduce((s,a)=>s+a.dev,0);
   const avgT=answers.reduce((s,a)=>s+a.t,0)/n;
 
-  const done = lives>0;  // terminó el mazo con vidas: maestría completa
+  const done = lives>0 && runFull;  // terminó las cartas sin perder la torre del rey: maestría
+  clearRun();
+  const before=badgeStates();
   $("score").textContent=`${hits} ${hits===1?L("carta","card"):L("cartas","cards")}`;
-  $("gradeSub").textContent= done ? L(`¡Maestría completa! Acertaste las ${deck.length} cartas · nota ${fmt(nota)}/20`,`Mastery complete! You got all ${deck.length} cards · score ${fmt(nota)}/20`) : L(`Llegaste a ${hits} de ${deck.length}${crowns?` · ${crowns} 👑`:""} · nota ${fmt(nota)}/20`,`You reached ${hits} of ${deck.length}${crowns?` · ${crowns} 👑`:""} · score ${fmt(nota)}/20`);
+  setPipette("pipetteRes",hits,deck.length);
+  $("gradeSub").textContent= done ? L(`¡Maestría ${DIF_NAME(timeLimit)} completa! · ${fmt(avgT)} s por carta · nota ${fmt(nota)}/20`,`${DIF_NAME(timeLimit)} Mastery complete! · ${fmt(avgT)} s per card · score ${fmt(nota)}/20`) : (lives>0 && !runFull) ? L(`Práctica completada: ${hits} de ${deck.length}`,`Practice complete: ${hits} of ${deck.length}`) : L(`Llegaste a ${hits} de ${deck.length}${crowns?` · ${crowns} 👑`:""} · nota ${fmt(nota)}/20`,`You reached ${hits} of ${deck.length}${crowns?` · ${crowns} 👑`:""} · score ${fmt(nota)}/20`);
   $("acc").textContent=`${Math.round(acc*100)}%`;
   $("dev").textContent=dev;
   $("avg").textContent=`${fmt(avgT)} s`;
@@ -630,13 +658,22 @@ function finish(){
     if(!a.ok) c.errors++;
     if(a.v!==null){c.timeSum+=a.t;c.timeN++;}
   });
-  const prevBest=h.attempts.length?Math.max(...h.attempts.map(attHits)):0;
   recordBanner($("recBanner"), h.attempts.filter(a=>a.t===timeLimit).map(attHits), hits);
-  const newB=BADGES.filter(b=>hits>=badgeNeed(b) && prevBest<badgeNeed(b));
-  if(newB.length){ setTimeout(sfx.fanfare,200); const el=$("recBanner"); el.className="banner rec"; el.textContent=`${L("¡Nueva insignia!","New badge!")} ${newB.map(b=>b.i+" "+b.t).join(" · ")}`; }
   h.attempts.push({date:new Date().toISOString(),n,t:timeLimit,nota,acc,dev,avgT,hits});
   h.attempts=h.attempts.slice(-100);
   save(h);
+  // logros de maestría: completar, partida perfecta y récord de velocidad
+  const msgs=[];
+  if(done){
+    const m=loadM(), prev=m[timeLimit]||{};
+    const cur={done:true, perfect:prev.perfect||misses.length===0, bestAvg:prev.bestAvg?Math.min(prev.bestAvg,avgT):avgT};
+    if(prev.bestAvg && avgT<prev.bestAvg) msgs.push(L(`⚡ Nuevo récord de velocidad: ${fmt(avgT)} s por carta`,`⚡ New speed record: ${fmt(avgT)} s per card`));
+    m[timeLimit]=cur; saveM(m);
+  }
+  const after=badgeStates();
+  const newB=BADGES.filter((b,i)=>after[i]&&!before[i]);
+  if(newB.length) msgs.unshift(`${L("¡Nueva insignia!","New badge!")} ${newB.map(b=>b.i+" "+b.t).join(" · ")}`);
+  if(msgs.length){ setTimeout(sfx.fanfare,200); const el=$("recBanner"); el.className="banner rec"; el.textContent=msgs.join(" · "); }
   renderHistory(h);
   progressChart($("costChart"), h.attempts.map(a=>({...a,nota:attHits(a)})), a=>a.t, COST_GROUPS, timeLimit, Math.max(20,...h.attempts.map(attHits)));
 }
@@ -741,23 +778,86 @@ const COST_GROUPS=[{id:8,label:L("Fácil","Easy"),color:"var(--ok)"},{id:5,label
 const COUNT_GROUPS=[{id:"Fácil",label:LEVEL_NAME["Fácil"],color:"var(--ok)"},{id:"Intermedio",label:LEVEL_NAME["Intermedio"],color:"#3FA9F5"},{id:"Medio",label:LEVEL_NAME["Medio"],color:"var(--elixir)"},{id:"Difícil",label:LEVEL_NAME["Difícil"],color:"var(--gold)"}];
 
 
+
+
+// ================= CUENTAGOTAS DE PROGRESO =================
+function pipetteSVG(done,total){
+  const f=total?Math.min(1,done/total):0, x0=58, w=232, fw=Math.max(0,w*f);
+  return `<svg viewBox="0 0 320 44" role="img">
+    <defs><linearGradient id="pgG" x1="0" x2="1"><stop offset="0" stop-color="var(--elixir)"/><stop offset="1" stop-color="var(--elixir-2)"/></linearGradient>
+    <clipPath id="pgC"><rect x="${x0}" y="10" width="${w}" height="24" rx="12"/></clipPath></defs>
+    <rect class="pg-bulb" x="4" y="6" width="48" height="32" rx="16"/>
+    <rect class="pg-bulb" x="46" y="15" width="16" height="14" rx="3" opacity=".6"/>
+    <rect class="pg-tube" x="${x0}" y="10" width="${w}" height="24" rx="12"/>
+    <rect class="pg-liquid" clip-path="url(#pgC)" x="${x0}" y="10" width="${fw}" height="24" fill="url(#pgG)"/>
+    <path class="pg-tube" d="M${x0+w-2} 16 L314 22 L${x0+w-2} 28 Z"/>
+    ${f>0?`<circle cx="${x0+fw}" cy="22" r="0"/>`:""}
+    <text class="pg-txt" x="${x0+w/2}" y="27" text-anchor="middle">${done} / ${total}</text>
+  </svg>`;
+}
+function setPipette(id,done,total){ const el=$(id); if(el) el.innerHTML=pipetteSVG(done,total); }
+
+// ================= GUARDAR Y CONTINUAR (Maestría) =================
+const RUN_KEY="elixirRunV1";
+const byKey=k=>CARDS.find(c=>cardKey(c)===k);
+function loadRun(){ try{return JSON.parse(localStorage.getItem(RUN_KEY));}catch(e){return null;} }
+function clearRun(){ try{localStorage.removeItem(RUN_KEY);}catch(e){} }
+function saveRun(){
+  // si hay una carta en pantalla sin responder, vuelve al mazo en otra posición
+  const rest=shuffle(deck.slice(idx));
+  const data={t:timeLimit,full:runFull,done:deck.slice(0,idx).map(cardKey),rest:rest.map(cardKey),
+    hits,streak,lives,crowns,misses:misses.map(m=>({k:cardKey(m.card),you:m.you})),answers,date:new Date().toISOString()};
+  try{localStorage.setItem(RUN_KEY,JSON.stringify(data));}catch(e){}
+}
+function pauseRun(){
+  clearInterval(timer); clearTimeout(nextT); locked=true;
+  if(answers.length && lives>0 && idx<deck.length) saveRun();
+  refreshSetup(); show("setup");
+}
+function resumeRun(){
+  const r=loadRun(); if(!r) return;
+  const done=r.done.map(byKey).filter(Boolean), rest=r.rest.map(byKey).filter(Boolean);
+  timeLimit=r.t; const radio=document.querySelector(`input[name="time"][value="${r.t}"]`); if(radio) radio.checked=true;
+  deck=done.concat(rest); idx=done.length; hits=r.hits; streak=r.streak; lives=r.lives; crowns=r.crowns;
+  misses=r.misses.map(m=>({card:byKey(m.k),you:m.you})).filter(m=>m.card); answers=r.answers; runFull=r.full;
+  clearRun(); sfx.swords(); show("game"); next();
+}
+function renderResume(isCount){
+  const r=loadRun(), b=$("resumeBtn");
+  if(!r || isCount){ b.classList.add("hidden"); return; }
+  const dif={8:L("Fácil","Easy"),5:"Normal",3:L("Difícil","Hard")}[r.t]||"";
+  b.textContent=`▶ ${L("Continuar partida","Continue run")} · ${r.hits} ${L("cartas","cards")} · ${"🏰".repeat(r.lives)}${"💥".repeat(MAX_LIVES-r.lives)}${r.crowns?` 👑${r.crowns}`:""} · ${dif}`;
+  b.classList.remove("hidden");
+}
+document.addEventListener("visibilitychange",()=>{ if(document.hidden && !$("game").classList.contains("hidden") && !locked) pauseRun(); });
+
 // ================= INSIGNIAS Y ACERCA DE =================
 const STUDIO="Inka Lobby GG";   // nombre del estudio: cámbialo aquí
 $("studioName").textContent=STUDIO;
 $("aboutOpen").addEventListener("click",()=>$("about").showModal());
 $("aboutClose").addEventListener("click",()=>$("about").close());
-const BADGES=[{n:25,i:"🥉",t:L("25 cartas","25 cards")},{n:50,i:"🥈",t:L("50 cartas","50 cards")},{n:100,i:"🥇",t:L("100 cartas","100 cards")},{n:Infinity,i:"👑",t:L("Maestría","Mastery")}];
-const badgeNeed=b=>b.n===Infinity?CARDS.length:b.n;
+const MKEY="elixirMasteryV1";   // {8|5|3: {done, perfect, bestAvg}}
+function loadM(){ try{return JSON.parse(localStorage.getItem(MKEY))||{};}catch(e){return {};} }
+function saveM(m){ try{localStorage.setItem(MKEY,JSON.stringify(m));}catch(e){} }
+const DIF_NAME=t=>({8:L("Fácil","Easy"),5:"Normal",3:L("Difícil","Hard")})[t];
+const bestHits=()=>{const h=load(); return h.attempts.length?Math.max(...h.attempts.map(attHits)):0;};
+const BADGES=[
+  {i:"🥉",t:L("25 cartas","25 cards"),  on:()=>bestHits()>=25,  how:()=>L("Acierta 25 cartas en una sola partida.","Get 25 cards right in a single run."), prog:()=>L(`Tu récord: ${bestHits()}.`,`Your best: ${bestHits()}.`)},
+  {i:"🥈",t:L("50 cartas","50 cards"),  on:()=>bestHits()>=50,  how:()=>L("Acierta 50 cartas en una sola partida.","Get 50 cards right in a single run."), prog:()=>L(`Tu récord: ${bestHits()}.`,`Your best: ${bestHits()}.`)},
+  {i:"🥇",t:L("100 cartas","100 cards"),on:()=>bestHits()>=100, how:()=>L("Acierta 100 cartas en una sola partida.","Get 100 cards right in a single run."), prog:()=>L(`Tu récord: ${bestHits()}.`,`Your best: ${bestHits()}.`)},
+  {i:"💎",t:L("Perfecta","Perfect"), on:()=>Object.values(loadM()).some(x=>x.perfect),
+     how:()=>L(`Completa las ${CARDS.length} cartas sin fallar ninguna.`,`Complete all ${CARDS.length} cards without a single miss.`), prog:()=>""},
+  ...[8,5,3].map((t,j)=>({i:"👑".repeat(j+1),t:DIF_NAME(t),on:()=>!!(loadM()[t]||{}).done,
+     how:()=>L(`Maestría en ${DIF_NAME(t)}: completa las ${CARDS.length} cartas sin que caiga tu torre del rey.`,`${DIF_NAME(t)} Mastery: complete all ${CARDS.length} cards before your King Tower falls.`),
+     prog:()=>{const x=loadM()[t]; return x&&x.bestAvg?L(`⚡ Tu mejor tiempo: ${fmt(x.bestAvg)} s por carta.`,`⚡ Your best time: ${fmt(x.bestAvg)} s per card.`):"";}}))
+];
+const badgeStates=()=>BADGES.map(b=>b.on());
 function renderBadges(){
-  const h=load(); const best=h.attempts.length?Math.max(...h.attempts.map(attHits)):0;
-  $("badges").innerHTML=BADGES.map((b,i)=>`<button type="button" class="badge${best>=badgeNeed(b)?" on":""}" data-i="${i}"><span class="bi">${b.i}</span>${b.t}</button>`).join("");
+  $("badges").innerHTML=BADGES.map((b,i)=>`<button type="button" class="badge${b.on()?" on":""}" data-i="${i}"><span class="bi${[...b.i].length>1?" sm":""}">${b.i}</span>${b.t}</button>`).join("");
   $("badges").querySelectorAll(".badge").forEach(el=>el.addEventListener("click",()=>{
-    const b=BADGES[+el.dataset.i], need=badgeNeed(b), got=best>=need;
-    const how = b.n===Infinity
-      ? L(`Acierta las ${need} cartas sin que caiga tu torre del rey.`,`Get all ${need} cards right before your King Tower falls.`)
-      : L(`Acierta ${need} cartas en una sola partida.`,`Get ${need} cards right in a single run.`);
+    const b=BADGES[+el.dataset.i], got=b.on();
     const info=$("badgeInfo");
-    info.textContent=`${b.i} ${how} ${got?L("¡Conseguida!","Unlocked!"):L(`Tu récord: ${best}.`,`Your best: ${best}.`)}`;
+    info.textContent=`${b.i} ${b.how()} ${got?L("¡Conseguida!","Unlocked!"):""} ${b.prog()}`.replace(/\s+/g," ").trim();
     info.classList.remove("hidden");
   }));
 }
@@ -954,7 +1054,8 @@ function cNextClick(){ cIdx++; cNextRound(); }
 $("cNext").addEventListener("click",cNextClick);
 $("cReplay").addEventListener("click",cPlay);
 $("cQuit").addEventListener("click",()=>{clearInterval(cTimer);clearTimeout(cReveal);cLocked=true;if(cRes.length) cFinish(); else {refreshSetup();show("setup");}});
-$("quit").addEventListener("click",()=>{clearInterval(timer);clearTimeout(nextT);locked=true;refreshSetup();show("setup");});
+$("quit").addEventListener("click",pauseRun);
+$("resumeBtn").addEventListener("click",resumeRun);
 
 function cFinish(){
   show("countResults");
